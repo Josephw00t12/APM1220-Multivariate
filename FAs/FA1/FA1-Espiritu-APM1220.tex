@@ -1,0 +1,2639 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[margin=0.6in]{geometry}
+
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
+\setlength{\parskip}{2pt}
+\setlength{\parsep}{0pt}
+
+\begin{document}
+	
+	\begin{center}
+		{\large\textbf{APM1220}} \quad
+		\textbf{FA 1 -- Foundations: Matrix Algebra} \quad 
+		\\ Joseph Raphael Espiritu
+	\end{center}
+	
+	\vspace{-0.3em}
+	
+	\section*{Problem 2.2}
+	
+	Given
+	
+	\[
+	A =
+	\begin{bmatrix}
+		-1 & 3\\
+		4 & 2
+	\end{bmatrix},
+	\qquad
+	B =
+	\begin{bmatrix}
+		4 & -3\\
+		1 & -2\\
+		-2 & 0
+	\end{bmatrix},
+	\qquad
+	C =
+	\begin{bmatrix}
+		5\\
+		-4\\
+		2
+	\end{bmatrix}.
+	\]
+	
+	\subsection*{(a) $5A$}
+	
+	Scalar multiplication is performed by multiplying every element of $A$
+	by $5$:
+	
+	\[
+	5A
+	=
+	5
+	\begin{bmatrix}
+		-1 & 3\\
+		4 & 2
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		5(-1) & 5(3)\\
+		5(4) & 5(2)
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		-5 & 15\\
+		20 & 10
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		5A =
+		\begin{bmatrix}
+			-5 & 15\\
+			20 & 10
+	\end{bmatrix}}
+	\]
+	
+	\subsection*{(b) $BA$}
+	
+	The dimensions are
+	
+	\[
+	B_{3\times2}A_{2\times2}.
+	\]
+	
+	Since the inner dimensions are equal,
+	
+	\[
+	(3\times2)(2\times2)=(3\times2),
+	\]
+	
+	so $BA$ is defined.
+	
+	\[
+	BA
+	=
+	\begin{bmatrix}
+		4 & -3\\
+		1 & -2\\
+		-2 & 0
+	\end{bmatrix}
+	\begin{bmatrix}
+		-1 & 3\\
+		4 & 2
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		4(-1)+(-3)(4) &
+		4(3)+(-3)(2)
+		\\
+		1(-1)+(-2)(4) &
+		1(3)+(-2)(2)
+		\\
+		(-2)(-1)+0(4) &
+		(-2)(3)+0(2)
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		-4-12 & 12-6\\
+		-1-8 & 3-4\\
+		2+0 & -6+0
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		-16 & 6\\
+		-9 & -1\\
+		2 & -6
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		BA =
+		\begin{bmatrix}
+			-16 & 6\\
+			-9 & -1\\
+			2 & -6
+	\end{bmatrix}}
+	\]
+	
+	\subsection*{(c) $A'B'$}
+	
+	First, transpose $A$ and $B$:
+	
+	\[
+	A'
+	=
+	\begin{bmatrix}
+		-1 & 4\\
+		3 & 2
+	\end{bmatrix}
+	\]
+	
+	and
+	
+	\[
+	B'
+	=
+	\begin{bmatrix}
+		4 & 1 & -2\\
+		-3 & -2 & 0
+	\end{bmatrix}.
+	\]
+	
+	The dimensions are
+	
+	\[
+	A'_{2\times2}B'_{2\times3}.
+	\]
+	
+	Therefore,
+	
+	\[
+	(2\times2)(2\times3)=(2\times3),
+	\]
+	
+	so $A'B'$ is defined.
+	
+	\[
+	A'B'
+	=
+	\begin{bmatrix}
+		-1 & 4\\
+		3 & 2
+	\end{bmatrix}
+	\begin{bmatrix}
+		4 & 1 & -2\\
+		-3 & -2 & 0
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		(-1)(4)+4(-3) &
+		(-1)(1)+4(-2) &
+		(-1)(-2)+4(0)
+		\\
+		3(4)+2(-3) &
+		3(1)+2(-2) &
+		3(-2)+2(0)
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		-4-12 & -1-8 & 2+0\\
+		12-6 & 3-4 & -6+0
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		-16 & -9 & 2\\
+		6 & -1 & -6
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		A'B' =
+		\begin{bmatrix}
+			-16 & -9 & 2\\
+			6 & -1 & -6
+	\end{bmatrix}}
+	\]
+	
+	\subsection*{(d) $C'B$}
+	
+	First, transpose $C$:
+	
+	\[
+	C'
+	=
+	\begin{bmatrix}
+		5 & -4 & 2
+	\end{bmatrix}.
+	\]
+	
+	The dimensions are
+	
+	\[
+	C'_{1\times3}B_{3\times2}.
+	\]
+	
+	Therefore,
+	
+	\[
+	(1\times3)(3\times2)=(1\times2),
+	\]
+	
+	so $C'B$ is defined.
+	
+	\[
+	C'B
+	=
+	\begin{bmatrix}
+		5 & -4 & 2
+	\end{bmatrix}
+	\begin{bmatrix}
+		4 & -3\\
+		1 & -2\\
+		-2 & 0
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		5(4)+(-4)(1)+2(-2)
+		&
+		5(-3)+(-4)(-2)+2(0)
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		20-4-4 &
+		-15+8+0
+	\end{bmatrix}
+	\]
+	
+	\[
+	=
+	\begin{bmatrix}
+		12 & -7
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		C'B =
+		\begin{bmatrix}
+			12 & -7
+	\end{bmatrix}}
+	\]
+	
+	\subsection*{(e) Is $AB$ defined?}
+	
+	The dimensions are
+	
+	\[
+	A_{2\times2}B_{3\times2}.
+	\]
+	
+	For matrix multiplication to be defined, the number of columns
+	of the first matrix must equal the number of rows of the second matrix.
+	
+	Here,
+	
+	\[
+	2 \neq 3.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{AB\text{ is not defined.}}
+	\]
+	
+	\section*{Problem 2.4}
+	
+	When $A^{-1}$ and $B^{-1}$ exist, prove each of the following:
+	
+	\subsection*{(a) $(A')^{-1}=(A^{-1})'$}
+	
+	By the definition of a matrix inverse,
+	
+	\[
+	AA^{-1}=A^{-1}A=I.
+	\]
+	
+	We first transpose the equation
+	
+	\[
+	AA^{-1}=I.
+	\]
+	
+	Taking the transpose of both sides gives
+	
+	\[
+	(AA^{-1})'=I'.
+	\]
+	
+	The identity matrix is unchanged by transposition because its
+	nonzero entries lie only on the main diagonal. Therefore,
+	
+	\[
+	I'=I.
+	\]
+	
+	Also, the transpose of a matrix product reverses the order:
+	
+	\[
+	(AB)'=B'A'.
+	\]
+	
+	Thus,
+	
+	\[
+	(AA^{-1})'
+	=
+	(A^{-1})'A'.
+	\]
+	
+	Therefore,
+	
+	\[
+	(A^{-1})'A'=I.
+	\]
+	
+	We also start with the other inverse relationship,
+	
+	\[
+	A^{-1}A=I,
+	\]
+	
+	and transpose both sides:
+	
+	\[
+	(A^{-1}A)'=I'.
+	\]
+	
+	Using the transpose product rule,
+	
+	\[
+	A'(A^{-1})'=I.
+	\]
+	
+	Hence, we have shown both
+	
+	\[
+	(A^{-1})'A'=I
+	\]
+	
+	and
+	
+	\[
+	A'(A^{-1})'=I.
+	\]
+	
+	Therefore, $(A^{-1})'$ satisfies the definition of the inverse of $A'$.
+	Thus,
+	
+	\[
+	\boxed{(A')^{-1}=(A^{-1})'}.
+	\]
+	
+	\subsection*{(b) $(AB)^{-1}=B^{-1}A^{-1}$}
+	
+	We want to prove that
+	
+	\[
+	\boxed{(AB)^{-1}=B^{-1}A^{-1}}.
+	\]
+	
+	Rather than assuming that the equality is already true, we verify
+	whether $B^{-1}A^{-1}$ satisfies the definition of the inverse of $AB$.
+	
+	For a matrix $C$ to be the inverse of $AB$, it must satisfy
+	
+	\[
+	C(AB)=(AB)C=I.
+	\]
+	
+	We propose
+	
+	\[
+	C=B^{-1}A^{-1}.
+	\]
+	
+	We first verify the product in one direction:
+	
+	\[
+	(B^{-1}A^{-1})(AB).
+	\]
+	
+	Using associativity of matrix multiplication, we regroup the factors:
+	
+	\[
+	B^{-1}(A^{-1}A)B.
+	\]
+	
+	Since $A^{-1}$ is the inverse of $A$,
+	
+	\[
+	A^{-1}A=I.
+	\]
+	
+	Therefore,
+	
+	\[
+	B^{-1}IB.
+	\]
+	
+	The identity matrix does not change a matrix when multiplied by it:
+	
+	\[
+	B^{-1}B.
+	\]
+	
+	Since $B^{-1}$ is the inverse of $B$,
+	
+	\[
+	B^{-1}B=I.
+	\]
+	
+	Hence,
+	
+	\[
+	\boxed{(B^{-1}A^{-1})(AB)=I}.
+	\]
+	
+	We must also verify the product in the other direction:
+	
+	\[
+	(AB)(B^{-1}A^{-1}).
+	\]
+	
+	Again, regrouping the factors gives
+	
+	\[
+	A(BB^{-1})A^{-1}.
+	\]
+	
+	Since
+	
+	\[
+	BB^{-1}=I,
+	\]
+	
+	we obtain
+	
+	\[
+	AIA^{-1}.
+	\]
+	
+	Using the identity property,
+	
+	\[
+	AA^{-1}.
+	\]
+	
+	Since
+	
+	\[
+	AA^{-1}=I,
+	\]
+	
+	we obtain
+	
+	\[
+	\boxed{(AB)(B^{-1}A^{-1})=I}.
+	\]
+	
+	Therefore, both inverse conditions have been satisfied:
+	
+	\[
+	(B^{-1}A^{-1})(AB)=I
+	\]
+	
+	and
+	
+	\[
+	(AB)(B^{-1}A^{-1})=I.
+	\]
+	
+	Thus, $B^{-1}A^{-1}$ is the inverse of $AB$. Therefore,
+	
+	\[
+	\boxed{(AB)^{-1}=B^{-1}A^{-1}}.
+	\]
+	
+	\section*{Problem 2.8}
+	
+	Given
+	
+	\[
+	A=
+	\begin{bmatrix}
+		1&2\\
+		2&-2
+	\end{bmatrix}.
+	\]
+	
+	We find the eigenvalues, corresponding normalized eigenvectors,
+	and the spectral decomposition of $A$.
+	
+	\subsection*{1. Eigenvalues}
+	
+	An eigenvector $x\neq0$ satisfies
+	
+	\[
+	Ax=\lambda x.
+	\]
+	
+	Since $Ix=x$, we can write
+	
+	\[
+	Ax=\lambda Ix.
+	\]
+	
+	Therefore,
+	
+	\[
+	(A-\lambda I)x=0.
+	\]
+	
+	For a nonzero solution $x$ to exist, $A-\lambda I$ must be singular.
+	Thus, the characteristic equation is
+	
+	\[
+	\det(A-\lambda I)=0.
+	\]
+	
+	The identity matrix is
+	
+	\[
+	I=
+	\begin{bmatrix}
+		1&0\\
+		0&1
+	\end{bmatrix},
+	\]
+	
+	so
+	
+	\[
+	A-\lambda I
+	=
+	\begin{bmatrix}
+		1-\lambda&2\\
+		2&-2-\lambda
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	
+	\[
+	\begin{aligned}
+		\det(A-\lambda I)
+		&=
+		\begin{vmatrix}
+			1-\lambda&2\\
+			2&-2-\lambda
+		\end{vmatrix}\\
+		&=(1-\lambda)(-2-\lambda)-(2)(2)\\
+		&=\lambda^2+\lambda-6.
+	\end{aligned}
+	\]
+	
+	Set the determinant equal to zero:
+	
+	\[
+	\lambda^2+\lambda-6=0.
+	\]
+	
+	Factoring gives
+	
+	\[
+	(\lambda-2)(\lambda+3)=0.
+	\]
+	
+	Hence, the eigenvalues are
+	
+	\[
+	\boxed{\lambda_1=2,\qquad\lambda_2=-3}.
+	\]
+	
+	\subsection*{2. Eigenvector for $\lambda_1=2$}
+	
+	For $\lambda_1=2$,
+	
+	\[
+	(A-2I)x_1=0.
+	\]
+	
+	We have
+	
+	\[
+	\begin{aligned}
+		A-2I
+		&=
+		\begin{bmatrix}
+			1&2\\
+			2&-2
+		\end{bmatrix}
+		-
+		\begin{bmatrix}
+			2&0\\
+			0&2
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			-1&2\\
+			2&-4
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	\begin{bmatrix}
+		-1&2\\
+		2&-4
+	\end{bmatrix}
+	\begin{bmatrix}
+		x_1\\
+		x_2
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0\\
+		0
+	\end{bmatrix}.
+	\]
+	
+	This gives
+	
+	\[
+	-x_1+2x_2=0.
+	\]
+	
+	Hence,
+	
+	\[
+	x_1=2x_2.
+	\]
+	
+	Choosing $x_2=1$ gives
+	
+	\[
+	\boxed{
+		x_1=
+		\begin{bmatrix}
+			2\\
+			1
+		\end{bmatrix}
+	}.
+	\]
+	
+	\subsection*{3. Normalize the first eigenvector}
+	
+	The length of $x_1$ is
+	
+	\[
+	\begin{aligned}
+		\|x_1\|
+		&=\sqrt{x_1'x_1}\\
+		&=
+		\sqrt{
+			\begin{bmatrix}
+				2&1
+			\end{bmatrix}
+			\begin{bmatrix}
+				2\\
+				1
+			\end{bmatrix}
+		}\\
+		&=\sqrt{4+1}\\
+		&=\sqrt{5}.
+	\end{aligned}
+	\]
+	
+	The normalized eigenvector is
+	
+	\[
+	e_1=\frac{x_1}{\|x_1\|}.
+	\]
+	
+	Thus,
+	
+	\[
+	\boxed{
+		e_1=
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			2\\
+			1
+		\end{bmatrix}
+	}.
+	\]
+	
+	It satisfies
+	
+	\[
+	e_1'e_1=1.
+	\]
+	
+	\subsection*{4. Eigenvector for $\lambda_2=-3$}
+	
+	For $\lambda_2=-3$,
+	
+	\[
+	(A+3I)x_2=0.
+	\]
+	
+	We have
+	
+	\[
+	\begin{aligned}
+		A+3I
+		&=
+		\begin{bmatrix}
+			1&2\\
+			2&-2
+		\end{bmatrix}
+		+
+		\begin{bmatrix}
+			3&0\\
+			0&3
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			4&2\\
+			2&1
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	\begin{bmatrix}
+		4&2\\
+		2&1
+	\end{bmatrix}
+	\begin{bmatrix}
+		x_1\\
+		x_2
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0\\
+		0
+	\end{bmatrix}.
+	\]
+	
+	From the first equation,
+	
+	\[
+	4x_1+2x_2=0.
+	\]
+	
+	Dividing by $2$ gives
+	
+	\[
+	2x_1+x_2=0.
+	\]
+	
+	Therefore,
+	
+	\[
+	x_2=-2x_1.
+	\]
+	
+	Choosing $x_1=1$ gives
+	
+	\[
+	\boxed{
+		x_2=
+		\begin{bmatrix}
+			1\\
+			-2
+		\end{bmatrix}
+	}.
+	\]
+	
+	\subsection*{5. Normalize the second eigenvector}
+	
+	The length of $x_2$ is
+	
+	\[
+	\begin{aligned}
+		\|x_2\|
+		&=\sqrt{x_2'x_2}\\
+		&=
+		\sqrt{
+			\begin{bmatrix}
+				1&-2
+			\end{bmatrix}
+			\begin{bmatrix}
+				1\\
+				-2
+			\end{bmatrix}
+		}\\
+		&=\sqrt{1+4}\\
+		&=\sqrt{5}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	e_2=\frac{x_2}{\|x_2\|},
+	\]
+	
+	giving
+	
+	\[
+	\boxed{
+		e_2=
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			1\\
+			-2
+		\end{bmatrix}
+	}.
+	\]
+	
+	It satisfies
+	
+	\[
+	e_2'e_2=1.
+	\]
+	
+	The two normalized eigenvectors are perpendicular:
+	
+	\[
+	\begin{aligned}
+		e_1'e_2
+		&=
+		\frac{1}{5}
+		\begin{bmatrix}
+			2&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			1\\
+			-2
+		\end{bmatrix}\\
+		&=\frac{1}{5}(2-2)\\
+		&=0.
+	\end{aligned}
+	\]
+	
+	Thus,
+	
+	\[
+	\boxed{e_1'e_2=0}.
+	\]
+	
+	Hence, $e_1$ and $e_2$ are orthonormal eigenvectors.
+	
+	\subsection*{6. Spectral Decomposition}
+	
+	For a symmetric matrix, the spectral decomposition is
+	
+	\[
+	A=\sum_i\lambda_i e_i e_i'.
+	\]
+	
+	For the two eigenvalues,
+	
+	\[
+	A=\lambda_1e_1e_1'
+	+\lambda_2e_2e_2'.
+	\]
+	
+	Substituting the eigenvalues gives
+	
+	\[
+	A=2e_1e_1'-3e_2e_2'.
+	\]
+	
+	First,
+	
+	\[
+	\begin{aligned}
+		e_1e_1'
+		&=
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			2\\
+			1
+		\end{bmatrix}
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			2&1
+		\end{bmatrix}\\
+		&=
+		\frac{1}{5}
+		\begin{bmatrix}
+			4&2\\
+			2&1
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	2e_1e_1'
+	=
+	\frac{1}{5}
+	\begin{bmatrix}
+		8&4\\
+		4&2
+	\end{bmatrix}.
+	\]
+	
+	Next,
+	
+	\[
+	\begin{aligned}
+		e_2e_2'
+		&=
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			1\\
+			-2
+		\end{bmatrix}
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			1&-2
+		\end{bmatrix}\\
+		&=
+		\frac{1}{5}
+		\begin{bmatrix}
+			1&-2\\
+			-2&4
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	-3e_2e_2'
+	=
+	\frac{1}{5}
+	\begin{bmatrix}
+		-3&6\\
+		6&-12
+	\end{bmatrix}.
+	\]
+	
+	Adding the two terms,
+	
+	\[
+	\begin{aligned}
+		A
+		&=
+		\frac{1}{5}
+		\begin{bmatrix}
+			8&4\\
+			4&2
+		\end{bmatrix}
+		+
+		\frac{1}{5}
+		\begin{bmatrix}
+			-3&6\\
+			6&-12
+		\end{bmatrix}\\
+		&=
+		\frac{1}{5}
+		\begin{bmatrix}
+			5&10\\
+			10&-10
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			1&2\\
+			2&-2
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore, the spectral decomposition is
+	
+	\[
+	\boxed{
+		A=2e_1e_1'-3e_2e_2'
+	}
+	\]
+	
+	where
+	
+	\[
+	\boxed{
+		e_1=
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			2\\
+			1
+		\end{bmatrix},
+		\qquad
+		e_2=
+		\frac{1}{\sqrt{5}}
+		\begin{bmatrix}
+			1\\
+			-2
+		\end{bmatrix}
+	}.
+	\]
+	
+	\section*{Problem 2.11}
+	
+	Let $A$ be a $p\times p$ diagonal matrix, where
+	
+	\[
+	A=\{a_{ij}\},
+	\qquad
+	a_{ij}=0\quad\text{for }i\neq j.
+	\]
+	
+	Thus, $A$ has the form
+	
+	\[
+	A=
+	\begin{bmatrix}
+		a_{11}&0&0&\cdots&0\\
+		0&a_{22}&0&\cdots&0\\
+		0&0&a_{33}&\cdots&0\\
+		\vdots&\vdots&\vdots&\ddots&\vdots\\
+		0&0&0&\cdots&a_{pp}
+	\end{bmatrix}.
+	\]
+	
+	We want to show that
+	
+	\[
+	\boxed{
+		|A|=a_{11}a_{22}\cdots a_{pp}
+	}.
+	\]
+	
+	Using cofactor expansion along the first row,
+	
+	\[
+	|A|
+	=
+	a_{11}A_{11}
+	+a_{12}A_{12}
+	+\cdots
+	+a_{1p}A_{1p}.
+	\]
+	
+	Since $A$ is diagonal,
+	
+	\[
+	a_{12}=a_{13}=\cdots=a_{1p}=0.
+	\]
+	
+	Therefore,
+	
+	\[
+	|A|
+	=
+	a_{11}A_{11}.
+	\]
+	
+	The cofactor $A_{11}$ is the determinant of the submatrix
+	obtained by deleting the first row and first column:
+	
+	\[
+	A_{11}
+	=
+	\begin{bmatrix}
+		a_{22}&0&\cdots&0\\
+		0&a_{33}&\cdots&0\\
+		\vdots&\vdots&\ddots&\vdots\\
+		0&0&\cdots&a_{pp}
+	\end{bmatrix}.
+	\]
+	
+	This submatrix is also diagonal. Expanding its determinant along
+	its first row gives
+	
+	\[
+	A_{11}=a_{22}A_{22}.
+	\]
+	
+	Therefore,
+	
+	\[
+	|A|
+	=
+	a_{11}a_{22}A_{22}.
+	\]
+	
+	Repeating the same argument for each successive diagonal submatrix,
+	
+	\[
+	\begin{aligned}
+		|A|
+		&=a_{11}a_{22}A_{22}\\
+		&=a_{11}a_{22}a_{33}A_{33}\\
+		&\;\vdots\\
+		&=a_{11}a_{22}\cdots a_{pp}.
+	\end{aligned}
+	\]
+	
+	Therefore, the determinant of a diagonal matrix is the product
+	of its diagonal elements:
+	
+	\[
+	\boxed{
+		|A|=a_{11}a_{22}\cdots a_{pp}
+	}.
+	\]
+	
+	\section*{Problem 2.24}
+	
+	Given
+	
+	\[
+	\Sigma=
+	\begin{bmatrix}
+		4&0&0\\
+		0&9&0\\
+		0&0&1
+	\end{bmatrix}.
+	\]
+	
+	We use the properties of diagonal and triangular matrices,
+	matrix inverses, and eigenvalues.
+	
+	\subsection*{(a) Find $\Sigma^{-1}$}
+	
+	Since $\Sigma$ is diagonal, it is also triangular.
+	
+	For a diagonal matrix with nonzero diagonal elements, its inverse
+	is obtained by taking the reciprocal of each diagonal element.
+	This follows from
+	
+	\[
+	\Sigma\Sigma^{-1}=I.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		\Sigma^{-1}
+		=
+		\begin{bmatrix}
+			1/4&0&0\\
+			0&1/9&0\\
+			0&0&1
+		\end{bmatrix}
+	}.
+	\]
+	
+	To verify,
+	
+	\[
+	\begin{aligned}
+		\Sigma\Sigma^{-1}
+		&=
+		\begin{bmatrix}
+			4&0&0\\
+			0&9&0\\
+			0&0&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			1/4&0&0\\
+			0&1/9&0\\
+			0&0&1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			4(1/4)&0&0\\
+			0&9(1/9)&0\\
+			0&0&1(1)
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			1&0&0\\
+			0&1&0\\
+			0&0&1
+		\end{bmatrix}\\
+		&=I.
+	\end{aligned}
+	\]
+	
+	Thus, the matrix above is $\Sigma^{-1}$.
+	
+	\subsection*{(b) Eigenvalues and Eigenvectors of $\Sigma$}
+	
+	A useful property of triangular matrices is that their eigenvalues
+	are the diagonal elements. Since $\Sigma$ is diagonal,
+	
+	\[
+	\boxed{
+		\lambda_1=4,\qquad
+		\lambda_2=9,\qquad
+		\lambda_3=1
+	}.
+	\]
+	
+	To find the corresponding eigenvectors, we use
+	
+	\[
+	\Sigma e_i=\lambda_i e_i.
+	\]
+	
+	Because $\Sigma$ is diagonal, multiplication by $\Sigma$ scales
+	each standard basis vector by the corresponding diagonal element.
+	Therefore, the standard basis vectors naturally give the
+	corresponding eigenvectors.
+	
+	For $\lambda_1=4$, choose
+	
+	\[
+	e_1=
+	\begin{bmatrix}
+		1\\0\\0
+	\end{bmatrix}.
+	\]
+	
+	This is not an arbitrary assumption. It is the first standard basis
+	vector, which isolates the first diagonal element of $\Sigma$:
+	
+	\[
+	\begin{aligned}
+		\Sigma e_1
+		&=
+		\begin{bmatrix}
+			4&0&0\\
+			0&9&0\\
+			0&0&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			1\\0\\0
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			4\\0\\0
+		\end{bmatrix}\\
+		&=
+		4
+		\begin{bmatrix}
+			1\\0\\0
+		\end{bmatrix}\\
+		&=4e_1.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		\lambda_1=4,\qquad
+		e_1=
+		\begin{bmatrix}
+			1\\0\\0
+		\end{bmatrix}
+	}.
+	\]
+	
+	For $\lambda_2=9$, use the second standard basis vector:
+	
+	\[
+	e_2=
+	\begin{bmatrix}
+		0\\1\\0
+	\end{bmatrix}.
+	\]
+	
+	Then,
+	
+	\[
+	\begin{aligned}
+		\Sigma e_2
+		&=
+		\begin{bmatrix}
+			4&0&0\\
+			0&9&0\\
+			0&0&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			0\\1\\0
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			0\\9\\0
+		\end{bmatrix}\\
+		&=
+		9
+		\begin{bmatrix}
+			0\\1\\0
+		\end{bmatrix}\\
+		&=9e_2.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		\lambda_2=9,\qquad
+		e_2=
+		\begin{bmatrix}
+			0\\1\\0
+		\end{bmatrix}
+	}.
+	\]
+	
+	For $\lambda_3=1$, use the third standard basis vector:
+	
+	\[
+	e_3=
+	\begin{bmatrix}
+		0\\0\\1
+	\end{bmatrix}.
+	\]
+	
+	Then,
+	
+	\[
+	\begin{aligned}
+		\Sigma e_3
+		&=
+		\begin{bmatrix}
+			4&0&0\\
+			0&9&0\\
+			0&0&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			0\\0\\1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			0\\0\\1
+		\end{bmatrix}\\
+		&=
+		1
+		\begin{bmatrix}
+			0\\0\\1
+		\end{bmatrix}\\
+		&=1e_3.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		\lambda_3=1,\qquad
+		e_3=
+		\begin{bmatrix}
+			0\\0\\1
+		\end{bmatrix}
+	}.
+	\]
+	
+	These eigenvectors are already normalized because
+	
+	\[
+	e_1'e_1=e_2'e_2=e_3'e_3=1.
+	\]
+	
+	Thus,
+	
+	\[
+	\boxed{
+		\begin{aligned}
+			\lambda_1&=4,
+			&
+			e_1&=
+			\begin{bmatrix}
+				1\\0\\0
+			\end{bmatrix},
+			\\[4pt]
+			\lambda_2&=9,
+			&
+			e_2&=
+			\begin{bmatrix}
+				0\\1\\0
+			\end{bmatrix},
+			\\[4pt]
+			\lambda_3&=1,
+			&
+			e_3&=
+			\begin{bmatrix}
+				0\\0\\1
+			\end{bmatrix}.
+		\end{aligned}
+	}
+	\]
+	
+	\subsection*{(c) Eigenvalues and Eigenvectors of $\Sigma^{-1}$}
+	
+	From part (a),
+	
+	\[
+	\Sigma^{-1}
+	=
+	\begin{bmatrix}
+		1/4&0&0\\
+		0&1/9&0\\
+		0&0&1
+	\end{bmatrix}.
+	\]
+	
+	Again, $\Sigma^{-1}$ is diagonal and therefore triangular.
+	Its eigenvalues are its diagonal elements:
+	
+	\[
+	\boxed{
+		\lambda_1=\frac14,\qquad
+		\lambda_2=\frac19,\qquad
+		\lambda_3=1
+	}.
+	\]
+	
+	The corresponding eigenvectors remain the same standard basis
+	vectors:
+	
+	\[
+	\boxed{
+		e_1=
+		\begin{bmatrix}
+			1\\0\\0
+		\end{bmatrix},
+		\qquad
+		e_2=
+		\begin{bmatrix}
+			0\\1\\0
+		\end{bmatrix},
+		\qquad
+		e_3=
+		\begin{bmatrix}
+			0\\0\\1
+		\end{bmatrix}
+	}.
+	\]
+	
+	For example,
+	
+	\[
+	\begin{aligned}
+		\Sigma^{-1}e_1
+		&=
+		\begin{bmatrix}
+			1/4&0&0\\
+			0&1/9&0\\
+			0&0&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			1\\0\\0
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			1/4\\0\\0
+		\end{bmatrix}\\
+		&=
+		\frac14e_1.
+	\end{aligned}
+	\]
+	
+	Thus, the eigenvalue changes from $4$ to $1/4$ while the
+	eigenvector remains $e_1$.
+	
+	In general, if
+	
+	\[
+	Ax=\lambda x,
+	\]
+	
+	then, provided $\lambda\neq0$,
+	
+	\[
+	A^{-1}x=\frac{1}{\lambda}x.
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		\lambda_i(A^{-1})
+		=
+		\frac{1}{\lambda_i(A)}
+	}
+	\]
+	
+	while the corresponding eigenvectors remain unchanged.
+	
+	For this problem,
+	
+	\[
+	4\longrightarrow\frac14,
+	\qquad
+	9\longrightarrow\frac19,
+	\qquad
+	1\longrightarrow1.
+	\]
+	
+	\subsection*{Properties Used}
+	
+	The main properties used in this problem are
+	
+	\[
+	\boxed{
+		\text{Diagonal matrix}
+		\Rightarrow
+		\text{triangular matrix}
+	}
+	\]
+	
+	\[
+	\boxed{
+		\text{Triangular matrix}
+		\Rightarrow
+		\text{eigenvalues are diagonal elements}
+	}
+	\]
+	
+	\[
+	\boxed{
+		\text{Diagonal matrix}
+		\Rightarrow
+		\text{standard basis vectors give the corresponding eigenvectors}
+	}
+	\]
+	
+	because
+	
+	\[
+	\Sigma
+	\begin{bmatrix}
+		1\\0\\0
+	\end{bmatrix}
+	=
+	4
+	\begin{bmatrix}
+		1\\0\\0
+	\end{bmatrix},
+	\qquad
+	\Sigma
+	\begin{bmatrix}
+		0\\1\\0
+	\end{bmatrix}
+	=
+	9
+	\begin{bmatrix}
+		0\\1\\0
+	\end{bmatrix},
+	\]
+	
+	and
+	
+	\[
+	\Sigma
+	\begin{bmatrix}
+		0\\0\\1
+	\end{bmatrix}
+	=
+	1
+	\begin{bmatrix}
+		0\\0\\1
+	\end{bmatrix}.
+	\]
+	
+	Also,
+	
+	\[
+	\boxed{
+		\Sigma\Sigma^{-1}=I
+		\Rightarrow
+		\text{reciprocal diagonal elements for a diagonal inverse}
+	}
+	\]
+	
+	and
+	
+	\[
+	\boxed{
+		Ax=\lambda x
+		\Rightarrow
+		A^{-1}x=\frac{1}{\lambda}x
+	}.
+	\]
+	
+	Thus, 2.24 can be solved primarily by recognizing these
+	matrix properties rather than repeatedly calculating a
+	characteristic determinant.
+
+	\section*{Problem 2.30}
+	
+	Given
+	\[
+	X=
+	\begin{bmatrix}
+		X_1\\
+		X_2\\
+		X_3\\
+		X_4
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		X^{(1)}\\
+		X^{(2)}
+	\end{bmatrix},
+	\qquad
+	X^{(1)}=
+	\begin{bmatrix}
+		X_1\\
+		X_2
+	\end{bmatrix},
+	\qquad
+	X^{(2)}=
+	\begin{bmatrix}
+		X_3\\
+		X_4
+	\end{bmatrix}.
+	\]
+	
+	The mean vector and covariance matrix are
+	\[
+	\mu_X=
+	\begin{bmatrix}
+		4\\
+		3\\
+		2\\
+		1
+	\end{bmatrix},
+	\qquad
+	\Sigma_X=
+	\begin{bmatrix}
+		3&0&2&2\\
+		0&1&1&0\\
+		2&1&9&-2\\
+		2&0&-2&4
+	\end{bmatrix}.
+	\]
+	
+	The covariance matrix is defined by
+	\[
+	\boxed{
+		\Sigma_X
+		=
+		\operatorname{Cov}(X)
+		=
+		E\left[(X-\mu_X)(X-\mu_X)'\right]
+	}
+	\]
+	
+	where $E[\cdot]$ is the expected-value operator and $\mu_X=E(X)$.
+	
+	% -----------------------------------------------------
+	\subsection*{(c) Find $\operatorname{Cov}(X^{(1)})$}
+	
+	Since
+	\[
+	X^{(1)}=
+	\begin{bmatrix}
+		X_1\\
+		X_2
+	\end{bmatrix},
+	\]
+	we take the covariance information for $X_1$ and $X_2$
+	from the first two rows and columns of $\Sigma_X$.
+	
+	Thus,
+	\[
+	\operatorname{Cov}(X^{(1)})
+	=
+	\begin{bmatrix}
+		3&0\\
+		0&1
+	\end{bmatrix}.
+	\]
+	
+	The entries represent
+	\[
+	3=\operatorname{Var}(X_1),\qquad
+	1=\operatorname{Var}(X_2),
+	\]
+	and
+	\[
+	0=\operatorname{Cov}(X_1,X_2).
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		\operatorname{Cov}(X^{(1)})
+		=
+		\begin{bmatrix}
+			3&0\\
+			0&1
+		\end{bmatrix}
+	}.
+	\]
+	
+	% -----------------------------------------------------
+	\subsection*{(d) Find $\operatorname{Cov}(AX^{(1)})$}
+	
+	Given
+	\[
+	A=
+	\begin{bmatrix}
+		1&2
+	\end{bmatrix},
+	\]
+	we first recognize that
+	\[
+	AX^{(1)}
+	=
+	\begin{bmatrix}
+		1&2
+	\end{bmatrix}
+	\begin{bmatrix}
+		X_1\\
+		X_2
+	\end{bmatrix}
+	=
+	X_1+2X_2.
+	\]
+	
+	For a linear transformation $Y=AX$, covariance transforms as
+	\[
+	\boxed{
+		\operatorname{Cov}(Y)
+		=
+		A\operatorname{Cov}(X)A'
+	}
+	\]
+	
+	because this follows directly from
+	\[
+	\operatorname{Cov}(Y)
+	=
+	E[(Y-\mu_Y)(Y-\mu_Y)']
+	\]
+	and
+	\[
+	Y-\mu_Y=A(X-\mu_X).
+	\]
+	
+	Therefore,
+	\[
+	\operatorname{Cov}(AX^{(1)})
+	=
+	A\operatorname{Cov}(X^{(1)})A'.
+	\]
+	
+	Since
+	\[
+	A'=
+	\begin{bmatrix}
+		1\\
+		2
+	\end{bmatrix},
+	\]
+	we get
+	\[
+	\begin{aligned}
+		\operatorname{Cov}(AX^{(1)})
+		&=
+		\begin{bmatrix}
+			1&2
+		\end{bmatrix}
+		\begin{bmatrix}
+			3&0\\
+			0&1
+		\end{bmatrix}
+		\begin{bmatrix}
+			1\\
+			2
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			3&2
+		\end{bmatrix}
+		\begin{bmatrix}
+			1\\
+			2
+		\end{bmatrix}\\
+		&=3+4\\
+		&=7.
+	\end{aligned}
+	\]
+	
+	Thus,
+	\[
+	\boxed{
+		\operatorname{Cov}(AX^{(1)})=7
+	}
+	\]
+	
+	Since $AX^{(1)}$ is only one variable,
+	this covariance is actually its variance:
+	\[
+	\boxed{
+		\operatorname{Cov}(AX^{(1)})
+		=
+		\operatorname{Var}(X_1+2X_2)=7.
+	}
+	\]
+	
+	% -----------------------------------------------------
+	\subsection*{(e) Find $E(X^{(2)})$}
+	
+	Since
+	\[
+	X^{(2)}
+	=
+	\begin{bmatrix}
+		X_3\\
+		X_4
+	\end{bmatrix},
+	\]
+	we take the last two entries of $\mu_X$:
+	\[
+	\boxed{
+		E(X^{(2)})
+		=
+		\begin{bmatrix}
+			2\\
+			1
+		\end{bmatrix}
+	}.
+	\]
+	
+	% -----------------------------------------------------
+	\subsection*{(f) Find $E(BX^{(2)})$}
+	
+	Given
+	\[
+	B=
+	\begin{bmatrix}
+		1&-2\\
+		2&-1
+	\end{bmatrix},
+	\]
+	linearity of expectation gives
+	\[
+	\boxed{
+		E(BX^{(2)})=BE(X^{(2)}).
+	}
+	\]
+	
+	Therefore,
+	\[
+	\begin{aligned}
+		E(BX^{(2)})
+		&=
+		\begin{bmatrix}
+			1&-2\\
+			2&-1
+		\end{bmatrix}
+		\begin{bmatrix}
+			2\\
+			1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			(1)(2)+(-2)(1)\\
+			(2)(2)+(-1)(1)
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			0\\
+			3
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Thus,
+	\[
+	\boxed{
+		E(BX^{(2)})
+		=
+		\begin{bmatrix}
+			0\\
+			3
+		\end{bmatrix}
+	}.
+	\]
+	
+	% -----------------------------------------------------
+	\subsection*{(g) Find $\operatorname{Cov}(X^{(2)})$}
+	
+	Since
+	\[
+	X^{(2)}
+	=
+	\begin{bmatrix}
+		X_3\\
+		X_4
+	\end{bmatrix},
+	\]
+	we take the bottom-right block of $\Sigma_X$:
+	
+	\[
+	\Sigma_{22}
+	=
+	\begin{bmatrix}
+		9&-2\\
+		-2&4
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		\operatorname{Cov}(X^{(2)})
+		=
+		\begin{bmatrix}
+			9&-2\\
+			-2&4
+		\end{bmatrix}
+	}.
+	\]
+	
+	Here,
+	\[
+	9=\operatorname{Var}(X_3),\qquad
+	4=\operatorname{Var}(X_4),
+	\]
+	while
+	\[
+	-2=\operatorname{Cov}(X_3,X_4).
+	\]
+	
+	The nonzero off-diagonal value means $X_3$ and $X_4$
+	have covariance $-2$.
+	
+	% -----------------------------------------------------
+	\subsection*{(h) Find $\operatorname{Cov}(BX^{(2)})$}
+	
+	Using the covariance transformation rule,
+	\[
+	\operatorname{Cov}(BX^{(2)})
+	=
+	B\operatorname{Cov}(X^{(2)})B'.
+	\]
+	
+	Since
+	\[
+	B'=
+	\begin{bmatrix}
+		1&2\\
+		-2&-1
+	\end{bmatrix},
+	\]
+	we obtain
+	\[
+	\begin{aligned}
+		\operatorname{Cov}(BX^{(2)})
+		&=
+		\begin{bmatrix}
+			1&-2\\
+			2&-1
+		\end{bmatrix}
+		\begin{bmatrix}
+			9&-2\\
+			-2&4
+		\end{bmatrix}
+		\begin{bmatrix}
+			1&2\\
+			-2&-1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			13&-10\\
+			20&-8
+		\end{bmatrix}
+		\begin{bmatrix}
+			1&2\\
+			-2&-1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			33&36\\
+			36&48
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		\operatorname{Cov}(BX^{(2)})
+		=
+		\begin{bmatrix}
+			33&36\\
+			36&48
+		\end{bmatrix}
+	}.
+	\]
+	
+	The transformed vector is
+	\[
+	BX^{(2)}
+	=
+	\begin{bmatrix}
+		X_3-2X_4\\
+		2X_3-X_4
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	33=\operatorname{Var}(X_3-2X_4),
+	\]
+	\[
+	48=\operatorname{Var}(2X_3-X_4),
+	\]
+	and
+	\[
+	36=
+	\operatorname{Cov}(X_3-2X_4,\;2X_3-X_4).
+	\]
+	
+	% -----------------------------------------------------
+	\subsection*{(i) Find $\operatorname{Cov}(X^{(1)},X^{(2)})$}
+	
+	Partition the covariance matrix according to
+	\[
+	X=
+	\begin{bmatrix}
+		X^{(1)}\\
+		X^{(2)}
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	\Sigma_X
+	=
+	\begin{bmatrix}
+		\Sigma_{11}&\Sigma_{12}\\
+		\Sigma_{21}&\Sigma_{22}
+	\end{bmatrix}.
+	\]
+	
+	The covariance between the first and second partitions
+	is the top-right block:
+	
+	\[
+	\boxed{
+		\operatorname{Cov}(X^{(1)},X^{(2)})
+		=
+		\Sigma_{12}
+		=
+		\begin{bmatrix}
+			2&2\\
+			1&0
+		\end{bmatrix}
+	}.
+	\]
+	
+	The rows correspond to $X_1,X_2$ and the columns
+	correspond to $X_3,X_4$:
+	
+	\[
+	\begin{array}{c|cc}
+		& X_3 & X_4\\
+		\hline
+		X_1 & 2 & 2\\
+		X_2 & 1 & 0
+	\end{array}
+	\]
+	
+	Thus,
+	\[
+	2=\operatorname{Cov}(X_1,X_3),
+	\qquad
+	2=\operatorname{Cov}(X_1,X_4),
+	\]
+	\[
+	1=\operatorname{Cov}(X_2,X_3),
+	\qquad
+	0=\operatorname{Cov}(X_2,X_4).
+	\]
+	
+	Because covariance is symmetric,
+	\[
+	\boxed{
+		\operatorname{Cov}(X^{(2)},X^{(1)})
+		=
+		\operatorname{Cov}(X^{(1)},X^{(2)})'
+	}
+	\]
+	
+	and therefore
+	
+	\[
+	\operatorname{Cov}(X^{(2)},X^{(1)})
+	=
+	\begin{bmatrix}
+		2&1\\
+		2&0
+	\end{bmatrix}.
+	\]
+	
+	% -----------------------------------------------------
+	\subsection*{(j) Find $\operatorname{Cov}(AX^{(1)},BX^{(2)})$}
+	
+	For two linear transformations,
+	\[
+	\boxed{
+		\operatorname{Cov}(AX^{(1)},BX^{(2)})
+		=
+		A\operatorname{Cov}(X^{(1)},X^{(2)})B'
+	}.
+	\]
+	
+	Using
+	\[
+	A=
+	\begin{bmatrix}
+		1&2
+	\end{bmatrix},
+	\qquad
+	\operatorname{Cov}(X^{(1)},X^{(2)})
+	=
+	\begin{bmatrix}
+		2&2\\
+		1&0
+	\end{bmatrix},
+	\]
+	and
+	\[
+	B'=
+	\begin{bmatrix}
+		1&2\\
+		-2&-1
+	\end{bmatrix},
+	\]
+	
+	we get
+	
+	\[
+	\begin{aligned}
+		\operatorname{Cov}(AX^{(1)},BX^{(2)})
+		&=
+		\begin{bmatrix}
+			1&2
+		\end{bmatrix}
+		\begin{bmatrix}
+			2&2\\
+			1&0
+		\end{bmatrix}
+		\begin{bmatrix}
+			1&2\\
+			-2&-1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			4&2
+		\end{bmatrix}
+		\begin{bmatrix}
+			1&2\\
+			-2&-1
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			0&6
+		\end{bmatrix}.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	
+	\[
+	\boxed{
+		\operatorname{Cov}(AX^{(1)},BX^{(2)})
+		=
+		\begin{bmatrix}
+			0&6
+		\end{bmatrix}
+	}.
+	\]
+	
+	Here,
+	\[
+	AX^{(1)}=X_1+2X_2
+	\]
+	
+	is one new variable, while
+	
+	\[
+	BX^{(2)}
+	=
+	\begin{bmatrix}
+		X_3-2X_4\\
+		2X_3-X_4
+	\end{bmatrix}
+	\]
+	
+	contains two new variables.
+	
+	Thus,
+	
+	\[
+	0=
+	\operatorname{Cov}
+	(X_1+2X_2,\;X_3-2X_4),
+	\]
+	
+	and
+	
+	\[
+	6=
+	\operatorname{Cov}
+	(X_1+2X_2,\;2X_3-X_4).
+	\]
+	
+	\subsection*{Problem 2.41}
+	
+	Given
+	
+	\[
+	\mu_X=E(X)=
+	\begin{bmatrix}
+		3\\
+		2\\
+		-2\\
+		0
+	\end{bmatrix},
+	\qquad
+	\Sigma_X=\operatorname{Cov}(X)
+	=
+	\begin{bmatrix}
+		3&0&0&0\\
+		0&3&0&0\\
+		0&0&3&0\\
+		0&0&0&3
+	\end{bmatrix}
+	=3I.
+	\]
+	
+	Let
+	
+	\[
+	A=
+	\begin{bmatrix}
+		1&-1&0&0\\
+		1&1&-2&0\\
+		1&1&1&-3
+	\end{bmatrix}.
+	\]
+	
+	Since $Y=AX$, the rows of $A$ create the three linear
+	combinations
+	
+	\[
+	Y_1=X_1-X_2,
+	\]
+	
+	\[
+	Y_2=X_1+X_2-2X_3,
+	\]
+	
+	\[
+	Y_3=X_1+X_2+X_3-3X_4.
+	\]
+	
+	% -----------------------------------------------------
+	
+	\subsubsection*{(a) Find $E(AX)$}
+	
+	For a linear transformation,
+	
+	\[
+	\boxed{
+		E(AX)=AE(X)=A\mu_X
+	}.
+	\]
+	
+	Therefore,
+	
+	\[
+	\begin{aligned}
+		E(AX)
+		&=
+		\begin{bmatrix}
+			1&-1&0&0\\
+			1&1&-2&0\\
+			1&1&1&-3
+		\end{bmatrix}
+		\begin{bmatrix}
+			3\\
+			2\\
+			-2\\
+			0
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			(1)(3)+(-1)(2)+(0)(-2)+(0)(0)\\
+			(1)(3)+(1)(2)+(-2)(-2)+(0)(0)\\
+			(1)(3)+(1)(2)+(1)(-2)+(-3)(0)
+		\end{bmatrix}\\
+		&=
+		\begin{bmatrix}
+			3-2\\
+			3+2+4\\
+			3+2-2
+		\end{bmatrix}\\
+		&=
+		\boxed{
+			\begin{bmatrix}
+				1\\
+				9\\
+				3
+			\end{bmatrix}
+		}.
+	\end{aligned}
+	\]
+	
+	% -----------------------------------------------------
+	
+	\subsubsection*{(b) Find $\operatorname{Cov}(AX)$}
+	
+	For a linear transformation,
+	
+	\[
+	\boxed{
+		\operatorname{Cov}(AX)=A\Sigma_XA'
+	}.
+	\]
+	
+	Since
+	
+	\[
+	\Sigma_X=3I,
+	\]
+	
+	we can simplify:
+	
+	\[
+	\begin{aligned}
+		\operatorname{Cov}(AX)
+		&=A(3I)A'\\
+		&=3AIA'\\
+		&=3AA'.
+	\end{aligned}
+	\]
+	
+	The transpose of $A$ is
+	
+	\[
+	A'=
+	\begin{bmatrix}
+		1&1&1\\
+		-1&1&1\\
+		0&-2&1\\
+		0&0&-3
+	\end{bmatrix}.
+	\]
+	
+	Let the rows of $A$ be
+	
+	\[
+	r_1=(1,-1,0,0),
+	\]
+	
+	\[
+	r_2=(1,1,-2,0),
+	\]
+	
+	\[
+	r_3=(1,1,1,-3).
+	\]
+	
+	Then $AA'$ contains the dot products of the rows:
+	
+	\[
+	AA'
+	=
+	\begin{bmatrix}
+		r_1r_1'&r_1r_2'&r_1r_3'\\
+		r_2r_1'&r_2r_2'&r_2r_3'\\
+		r_3r_1'&r_3r_2'&r_3r_3'
+	\end{bmatrix}.
+	\]
+	
+	Calculate the unique entries:
+	
+	\[
+	\begin{aligned}
+		r_1r_1'
+		&=(1)^2+(-1)^2
+		=2,\\
+		r_1r_2'
+		&=(1)(1)+(-1)(1)
+		=0,\\
+		r_1r_3'
+		&=(1)(1)+(-1)(1)
+		=0,\\
+		r_2r_2'
+		&=(1)^2+(1)^2+(-2)^2
+		=6,\\
+		r_2r_3'
+		&=(1)(1)+(1)(1)+(-2)(1)
+		=0,\\
+		r_3r_3'
+		&=(1)^2+(1)^2+(1)^2+(-3)^2
+		=12.
+	\end{aligned}
+	\]
+	
+	Because $AA'$ is symmetric,
+	
+	\[
+	AA'
+	=
+	\begin{bmatrix}
+		2&0&0\\
+		0&6&0\\
+		0&0&12
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	
+	\[
+	\begin{aligned}
+		\operatorname{Cov}(AX)
+		&=3AA'\\
+		&=
+		3
+		\begin{bmatrix}
+			2&0&0\\
+			0&6&0\\
+			0&0&12
+		\end{bmatrix}\\
+		&=
+		\boxed{
+			\begin{bmatrix}
+				6&0&0\\
+				0&18&0\\
+				0&0&36
+			\end{bmatrix}
+		}.
+	\end{aligned}
+	\]
+	
+	The diagonal entries are the variances:
+	
+	\[
+	\operatorname{Var}(Y_1)=6,
+	\qquad
+	\operatorname{Var}(Y_2)=18,
+	\qquad
+	\operatorname{Var}(Y_3)=36.
+	\]
+	
+	The off-diagonal entries are the covariances:
+	
+	\[
+	\operatorname{Cov}(Y_1,Y_2)
+	=
+	\operatorname{Cov}(Y_1,Y_3)
+	=
+	\operatorname{Cov}(Y_2,Y_3)
+	=0.
+	\]
+	
+	% -----------------------------------------------------
+	
+	\subsubsection*{(c) Which pairs of linear combinations have zero covariances?}
+	
+	Since
+	
+	\[
+	\operatorname{Cov}(AX)
+	=
+	\begin{bmatrix}
+		6&0&0\\
+		0&18&0\\
+		0&0&36
+	\end{bmatrix},
+	\]
+	
+	all off-diagonal entries are zero.
+	
+	Therefore, all three pairs have zero covariance:
+	
+	\[
+	\boxed{
+		(Y_1,Y_2),\qquad
+		(Y_1,Y_3),\qquad
+		(Y_2,Y_3)
+	}.
+	\]
+	
+	Using the original linear combinations:
+	
+	\[
+	\boxed{
+		(X_1-X_2,\;X_1+X_2-2X_3)
+	}
+	\]
+	
+	\[
+	\boxed{
+		(X_1-X_2,\;X_1+X_2+X_3-3X_4)
+	}
+	\]
+	
+	\[
+	\boxed{
+		(X_1+X_2-2X_3,\;
+		X_1+X_2+X_3-3X_4)
+	}.
+	\]
+	
+	All three pairs have covariance $0$.
+	
+	% -----------------------------------------------------
+	
+	\subsubsection*{Key Ideas}
+	
+	For a linear transformation $Y=AX$,
+	
+	\[
+	\boxed{
+		E(Y)=AE(X)
+	}
+	\]
+	
+	and
+	
+	\[
+	\boxed{
+		\operatorname{Cov}(Y)=A\Sigma_XA'
+	}.
+	\]
+	
+	Here,
+	
+	\[
+	\Sigma_X=3I,
+	\]
+	
+	so
+	
+	\[
+	\boxed{
+		\operatorname{Cov}(AX)=3AA'
+	}.
+	\]
+	
+	The rows of $A$ determine the new linear combinations.
+	Since $A$ has three rows, $AX$ contains three new variables,
+	so its covariance matrix is $3\times3$.
+	
+	The diagonal entries give the variances, while the
+	off-diagonal entries give the covariances.
+	
+\end{document}
