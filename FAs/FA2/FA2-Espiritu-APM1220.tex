@@ -1,0 +1,2715 @@
+\documentclass[12pt]{article} 
+
+\usepackage{amsmath} 
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage[margin=0.6in]{geometry} 
+
+\setlength{\abovedisplayskip}{4pt} 
+\setlength{\belowdisplayskip}{4pt} 
+\setlength{\abovedisplayshortskip}{2pt} 
+\setlength{\belowdisplayshortskip}{2pt} 
+\setlength{\parskip}{2pt} 
+\setlength{\parsep}{0pt} 
+
+\begin{document} 
+	
+	\begin{center} 
+		{\large\textbf{APM1220}} \quad 
+		\textbf{FA 2 -- Foundations: Sample Geometry} \quad  
+		\\ Joseph Raphael Espiritu 
+	\end{center} 
+	
+	\vspace{-0.3em} 
+	
+	\section*{Problem 3.1}
+	
+	Given the data matrix
+	\[
+	X=
+	\begin{bmatrix}
+		9&1\\
+		5&3\\
+		1&2
+	\end{bmatrix}.
+	\]
+	
+	There are \(n=3\) observations and \(p=2\) variables.
+	
+	\subsection*{(a)}
+	
+	The rows of \(X\) represent the three observations:
+	\[
+	\mathbf{x}_1'=(9,1),\qquad
+	\mathbf{x}_2'=(5,3),\qquad
+	\mathbf{x}_3'=(1,2).
+	\]
+	
+	Therefore, the three points to be plotted in the
+	\(p=2\) dimensional scatter plot are
+	\[
+	(9,1),\qquad (5,3),\qquad (1,2).
+	\]
+	
+	The sample mean vector is
+	\[
+	\bar{\mathbf{x}}
+	=
+	\begin{bmatrix}
+		\bar{x}_1\\
+		\bar{x}_2
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\dfrac{9+5+1}{3}\\[6pt]
+		\dfrac{1+3+2}{3}
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\dfrac{15}{3}\\[6pt]
+		\dfrac{6}{3}
+	\end{bmatrix}
+	=
+	\boxed{
+		\begin{bmatrix}
+			5\\
+			2
+	\end{bmatrix}}.
+	\]
+	
+	Hence, the sample mean is located at
+	\[
+	\boxed{\bar{\mathbf{x}}=(5,2)}.
+	\]
+	
+	The scatter plot with the sample mean located on the diagram
+	is shown below.
+	
+	\begin{center}
+		\begin{tikzpicture}[scale=0.65]
+			
+			% Axes
+			\draw[->] (0,0) -- (10.5,0) node[right] {$x_1$};
+			\draw[->] (0,0) -- (0,4.5) node[above] {$x_2$};
+			
+			% x-axis ticks
+			\foreach \x in {1,...,10}
+			{
+				\draw (\x,0.08) -- (\x,-0.08);
+				\node[below] at (\x,-0.08) {\small \x};
+			}
+			
+			% y-axis ticks
+			\foreach \y in {1,...,4}
+			{
+				\draw (0.08,\y) -- (-0.08,\y);
+				\node[left] at (-0.08,\y) {\small \y};
+			}
+			
+			% Data points
+			\fill (9,1) circle (2.5pt);
+			\node[above right] at (9,1) {$(9,1)$};
+			
+			\fill (5,3) circle (2.5pt);
+			\node[above right] at (5,3) {$(5,3)$};
+			
+			\fill (1,2) circle (2.5pt);
+			\node[above right] at (1,2) {$(1,2)$};
+			
+			% Sample mean
+			\draw[thick] (4.85,1.85) -- (5.15,2.15);
+			\draw[thick] (4.85,2.15) -- (5.15,1.85);
+			\node[below right] at (5,2) {$\bar{\mathbf{x}}=(5,2)$};
+			
+		\end{tikzpicture}
+	\end{center}
+	
+	\subsection*{(b)}
+	
+	For the \(n=3\)-dimensional representation, the columns of
+	\(X\) are treated as vectors in \(\mathbb{R}^3\).
+	
+	The first column is
+	\[
+	\mathbf{y}_1
+	=
+	\begin{bmatrix}
+		9\\
+		5\\
+		1
+	\end{bmatrix},
+	\]
+	and the second column is
+	\[
+	\mathbf{y}_2
+	=
+	\begin{bmatrix}
+		1\\
+		3\\
+		2
+	\end{bmatrix}.
+	\]
+	
+	Let
+	\[
+	\mathbf{1}
+	=
+	\begin{bmatrix}
+		1\\
+		1\\
+		1
+	\end{bmatrix}.
+	\]
+	
+	From part (a),
+	\[
+	\bar{x}_1=5,
+	\qquad
+	\bar{x}_2=2.
+	\]
+	
+	For the first variable, the mean component is
+	\[
+	\bar{x}_1\mathbf{1}
+	=
+	5
+	\begin{bmatrix}
+		1\\
+		1\\
+		1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		5\\
+		5\\
+		5
+	\end{bmatrix}.
+	\]
+	
+	Therefore, the deviation vector is
+	\[
+	\mathbf{d}_1
+	=
+	\mathbf{y}_1-\bar{x}_1\mathbf{1}
+	\]
+	\[
+	=
+	\begin{bmatrix}
+		9\\
+		5\\
+		1
+	\end{bmatrix}
+	-
+	\begin{bmatrix}
+		5\\
+		5\\
+		5
+	\end{bmatrix}
+	=
+	\boxed{
+		\begin{bmatrix}
+			4\\
+			0\\
+			-4
+	\end{bmatrix}}.
+	\]
+	
+	Thus,
+	\[
+	\mathbf{y}_1
+	=
+	\bar{x}_1\mathbf{1}+\mathbf{d}_1
+	=
+	\begin{bmatrix}
+		5\\
+		5\\
+		5
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		4\\
+		0\\
+		-4
+	\end{bmatrix}.
+	\]
+	
+	For the second variable, the mean component is
+	\[
+	\bar{x}_2\mathbf{1}
+	=
+	2
+	\begin{bmatrix}
+		1\\
+		1\\
+		1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		2\\
+		2\\
+		2
+	\end{bmatrix}.
+	\]
+	
+	Therefore, the deviation vector is
+	\[
+	\mathbf{d}_2
+	=
+	\mathbf{y}_2-\bar{x}_2\mathbf{1}
+	\]
+	\[
+	=
+	\begin{bmatrix}
+		1\\
+		3\\
+		2
+	\end{bmatrix}
+	-
+	\begin{bmatrix}
+		2\\
+		2\\
+		2
+	\end{bmatrix}
+	=
+	\boxed{
+		\begin{bmatrix}
+			-1\\
+			1\\
+			0
+	\end{bmatrix}}.
+	\]
+	
+	Thus,
+	\[
+	\mathbf{y}_2
+	=
+	\bar{x}_2\mathbf{1}+\mathbf{d}_2
+	=
+	\begin{bmatrix}
+		2\\
+		2\\
+		2
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		-1\\
+		1\\
+		0
+	\end{bmatrix}.
+	\]
+	
+	The \(n=3\)-dimensional representation can therefore be
+	sketched by showing the vectors \(\mathbf{y}_1\) and
+	\(\mathbf{y}_2\), their mean components, and their deviation
+	vectors.
+	
+	\begin{center}
+		\tdplotsetmaincoords{70}{120}
+		\begin{tikzpicture}[tdplot_main_coords,scale=0.55]
+			
+			% Axes
+			\draw[->] (0,0,0) -- (10,0,0) node[anchor=north east] {$x_1$};
+			\draw[->] (0,0,0) -- (0,7,0) node[anchor=north west] {$x_2$};
+			\draw[->] (0,0,0) -- (0,0,7) node[anchor=south] {$x_3$};
+			
+			% Mean line x1=x2=x3
+			\draw[dashed] (0,0,0) -- (6,6,6);
+			
+			% y1 vector
+			\draw[->,thick] (0,0,0) -- (9,5,1);
+			\node[above right] at (9,5,1) {$\mathbf{y}_1$};
+			
+			% y2 vector
+			\draw[->,thick] (0,0,0) -- (1,3,2);
+			\node[left] at (1,3,2) {$\mathbf{y}_2$};
+			
+			% Mean component 1
+			\draw[thick] (0,0,0) -- (5,5,5);
+			\node[above] at (5,5,5)
+			{$\bar{x}_1\mathbf{1}$};
+			
+			% Deviation 1
+			\draw[->,thick] (5,5,5) -- (9,5,1);
+			\node[right] at (7,5,3) {$\mathbf{d}_1$};
+			
+			% Mean component 2
+			\draw[thick] (0,0,0) -- (2,2,2);
+			\node[left] at (2,2,2)
+			{$\bar{x}_2\mathbf{1}$};
+			
+			% Deviation 2
+			\draw[->,thick] (2,2,2) -- (1,3,2);
+			\node[left] at (1.5,2.5,2) {$\mathbf{d}_2$};
+			
+			% Endpoints
+			\fill (9,5,1) circle (2pt);
+			\fill (1,3,2) circle (2pt);
+			\fill (5,5,5) circle (2pt);
+			\fill (2,2,2) circle (2pt);
+			
+		\end{tikzpicture}
+	\end{center}
+	
+	\subsection*{(c)}
+	
+	The deviation vectors obtained in part (b) are
+	\[
+	\mathbf{d}_1
+	=
+	\begin{bmatrix}
+		4\\
+		0\\
+		-4
+	\end{bmatrix},
+	\qquad
+	\mathbf{d}_2
+	=
+	\begin{bmatrix}
+		-1\\
+		1\\
+		0
+	\end{bmatrix}.
+	\]
+	
+	To sketch them emanating from the origin, both vectors are
+	drawn with their initial point at
+	\[
+	\mathbf{0}
+	=
+	\begin{bmatrix}
+		0\\
+		0\\
+		0
+	\end{bmatrix}.
+	\]
+	
+	\begin{center}
+		\tdplotsetmaincoords{70}{120}
+		\begin{tikzpicture}[tdplot_main_coords,scale=0.8]
+			
+			% Axes
+			\draw[->] (0,0,0) -- (5.5,0,0) node[anchor=north east] {$x_1$};
+			\draw[->] (0,0,0) -- (0,3.5,0) node[anchor=north west] {$x_2$};
+			\draw[->] (0,0,0) -- (0,0,5.5) node[anchor=south] {$x_3$};
+			
+			% Deviation vectors
+			\draw[->,very thick] (0,0,0) -- (4,0,-4);
+			\node[right] at (4,0,-4) {$\mathbf{d}_1=(4,0,-4)$};
+			
+			\draw[->,very thick] (0,0,0) -- (-1,1,0);
+			\node[left] at (-1,1,0) {$\mathbf{d}_2=(-1,1,0)$};
+			
+			% Origin
+			\fill (0,0,0) circle (2pt);
+			\node[below left] at (0,0,0) {$\mathbf{0}$};
+			
+			% Endpoints
+			\fill (4,0,-4) circle (2pt);
+			\fill (-1,1,0) circle (2pt);
+			
+		\end{tikzpicture}
+	\end{center}
+	
+	The lengths of the deviation vectors are found using
+	\[
+	\|\mathbf{d}_1\|
+	=
+	\sqrt{\mathbf{d}_1'\mathbf{d}_1}.
+	\]
+	
+	Therefore,
+	\[
+	\mathbf{d}_1'\mathbf{d}_1
+	=
+	\begin{bmatrix}
+		4&0&-4
+	\end{bmatrix}
+	\begin{bmatrix}
+		4\\
+		0\\
+		-4
+	\end{bmatrix}
+	\]
+	\[
+	=
+	(4)(4)+(0)(0)+(-4)(-4)
+	=
+	16+16
+	=
+	32.
+	\]
+	
+	Hence,
+	\[
+	\boxed{\|\mathbf{d}_1\|=\sqrt{32}=4\sqrt{2}}.
+	\]
+	
+	Similarly,
+	\[
+	\|\mathbf{d}_2\|
+	=
+	\sqrt{\mathbf{d}_2'\mathbf{d}_2}.
+	\]
+	
+	Thus,
+	\[
+	\mathbf{d}_2'\mathbf{d}_2
+	=
+	\begin{bmatrix}
+		-1&1&0
+	\end{bmatrix}
+	\begin{bmatrix}
+		-1\\
+		1\\
+		0
+	\end{bmatrix}
+	\]
+	\[
+	=
+	(-1)(-1)+(1)(1)+(0)(0)
+	=
+	2.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{\|\mathbf{d}_2\|=\sqrt{2}}.
+	\]
+	
+	Next, calculate the inner product:
+	\[
+	\mathbf{d}_1'\mathbf{d}_2
+	=
+	\begin{bmatrix}
+		4&0&-4
+	\end{bmatrix}
+	\begin{bmatrix}
+		-1\\
+		1\\
+		0
+	\end{bmatrix}
+	\]
+	\[
+	=
+	(4)(-1)+(0)(1)+(-4)(0)
+	=
+	-4.
+	\]
+	
+	Thus,
+	\[
+	\boxed{\mathbf{d}_1'\mathbf{d}_2=-4}.
+	\]
+	
+	Using the relationship between the inner product and the
+	angle between two vectors,
+	\[
+	\mathbf{d}_1'\mathbf{d}_2
+	=
+	\|\mathbf{d}_1\|
+	\|\mathbf{d}_2\|
+	\cos\theta,
+	\]
+	we obtain
+	\[
+	\cos\theta
+	=
+	\frac{\mathbf{d}_1'\mathbf{d}_2}
+	{\|\mathbf{d}_1\|\|\mathbf{d}_2\|}.
+	\]
+	
+	Substituting the values,
+	\[
+	\cos\theta
+	=
+	\frac{-4}
+	{(4\sqrt{2})(\sqrt{2})}
+	=
+	\frac{-4}{8}
+	=
+	\boxed{-\frac12}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{\theta=120^\circ}.
+	\]
+	
+	Now form the deviation matrix using the two deviation
+	vectors as columns:
+	\[
+	D=
+	\begin{bmatrix}
+		\mathbf{d}_1&\mathbf{d}_2
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		4&-1\\
+		0&1\\
+		-4&0
+	\end{bmatrix}.
+	\]
+	
+	Then
+	\[
+	D'
+	=
+	\begin{bmatrix}
+		4&0&-4\\
+		-1&1&0
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	D'D
+	=
+	\begin{bmatrix}
+		4&0&-4\\
+		-1&1&0
+	\end{bmatrix}
+	\begin{bmatrix}
+		4&-1\\
+		0&1\\
+		-4&0
+	\end{bmatrix}.
+	\]
+	
+	Multiplying each entry,
+	\[
+	D'D
+	=
+	\begin{bmatrix}
+		(4)(4)+(0)(0)+(-4)(-4)
+		&
+		(4)(-1)+(0)(1)+(-4)(0)
+		\\[6pt]
+		(-1)(4)+(1)(0)+(0)(-4)
+		&
+		(-1)(-1)+(1)(1)+(0)(0)
+	\end{bmatrix}
+	\]
+	\[
+	=
+	\begin{bmatrix}
+		32&-4\\
+		-4&2
+	\end{bmatrix}.
+	\]
+	
+	For \(n=3\), the sample covariance matrix used here is
+	\[
+	S_n=\frac{1}{n}D'D.
+	\]
+	
+	Thus,
+	\[
+	S_n
+	=
+	\frac13
+	\begin{bmatrix}
+		32&-4\\
+		-4&2
+	\end{bmatrix}
+	\]
+	\[
+	\boxed{
+		S_n=
+		\begin{bmatrix}
+			\dfrac{32}{3}&-\dfrac43\\[6pt]
+			-\dfrac43&\dfrac23
+	\end{bmatrix}}.
+	\]
+	
+	The diagonal elements of \(S_n\) are related to the squared
+	lengths of the deviation vectors:
+	\[
+	s_{n,11}
+	=
+	\frac{\mathbf{d}_1'\mathbf{d}_1}{n}
+	=
+	\frac{32}{3},
+	\]
+	and
+	\[
+	s_{n,22}
+	=
+	\frac{\mathbf{d}_2'\mathbf{d}_2}{n}
+	=
+	\frac{2}{3}.
+	\]
+	
+	The off-diagonal element is related to the inner product:
+	\[
+	s_{n,12}
+	=
+	\frac{\mathbf{d}_1'\mathbf{d}_2}{n}
+	=
+	-\frac43.
+	\]
+	
+	Finally, the correlation coefficient is
+	\[
+	r_{12}
+	=
+	\frac{s_{n,12}}
+	{\sqrt{s_{n,11}}\sqrt{s_{n,22}}}.
+	\]
+	
+	Substituting the entries of \(S_n\),
+	\[
+	r_{12}
+	=
+	\frac{-\frac43}
+	{\sqrt{\frac{32}{3}}
+		\sqrt{\frac23}}.
+	\]
+	
+	Since
+	\[
+	\sqrt{\frac{32}{3}}
+	\sqrt{\frac23}
+	=
+	\sqrt{\frac{64}{9}}
+	=
+	\frac83,
+	\]
+	we have
+	\[
+	r_{12}
+	=
+	\frac{-\frac43}{\frac83}
+	=
+	\boxed{-\frac12}.
+	\]
+	
+	Therefore, the correlation matrix is
+	\[
+	\boxed{
+		R=
+		\begin{bmatrix}
+			1&-\dfrac12\\[4pt]
+			-\dfrac12&1
+	\end{bmatrix}}.
+	\]
+	
+	Thus,
+	\[
+	\boxed{r_{12}=\cos\theta=-\frac12}.
+	\]
+	
+	The negative correlation is geometrically represented by the
+	obtuse angle
+	\[
+	\boxed{\theta=120^\circ}
+	\]
+	between the two deviation vectors.
+	
+	\section*{Problem 3.6}
+	
+	Given the data matrix
+	\[
+	X=
+	\begin{bmatrix}
+		-1&3&-2\\
+		2&4&2\\
+		5&2&3
+	\end{bmatrix}.
+	\]
+	
+	There are \(n=3\) observations and \(p=3\) variables.
+	
+	\subsection*{(a)}
+	
+	First, obtain the sample mean vector:
+	\[
+	\bar{x}
+	=
+	\begin{bmatrix}
+		\bar{x}_1\\
+		\bar{x}_2\\
+		\bar{x}_3
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\dfrac{-1+2+5}{3}\\[8pt]
+		\dfrac{3+4+2}{3}\\[8pt]
+		\dfrac{-2+2+3}{3}
+	\end{bmatrix}.
+	\]
+	
+	Evaluating each component,
+	\[
+	\bar{x}
+	=
+	\begin{bmatrix}
+		\dfrac{6}{3}\\[4pt]
+		\dfrac{9}{3}\\[4pt]
+		\dfrac{3}{3}
+	\end{bmatrix}
+	=
+	\boxed{
+		\begin{bmatrix}
+			2\\
+			3\\
+			1
+	\end{bmatrix}}.
+	\]
+	
+	The mean corrected data matrix is
+	\[
+	D=X-\mathbf{1}\bar{x}',
+	\]
+	where
+	\[
+	\mathbf{1}
+	=
+	\begin{bmatrix}
+		1\\1\\1
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\mathbf{1}\bar{x}'
+	=
+	\begin{bmatrix}
+		1\\1\\1
+	\end{bmatrix}
+	\begin{bmatrix}
+		2&3&1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		2&3&1\\
+		2&3&1\\
+		2&3&1
+	\end{bmatrix}.
+	\]
+	
+	Hence,
+	\[
+	D
+	=
+	\begin{bmatrix}
+		-1&3&-2\\
+		2&4&2\\
+		5&2&3
+	\end{bmatrix}
+	-
+	\begin{bmatrix}
+		2&3&1\\
+		2&3&1\\
+		2&3&1
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	\boxed{
+		D=
+		\begin{bmatrix}
+			-3&0&-3\\
+			0&1&1\\
+			3&-1&2
+	\end{bmatrix}}.
+	\]
+	
+	Let the columns of \(D\) be
+	\[
+	d_1=
+	\begin{bmatrix}
+		-3\\0\\3
+	\end{bmatrix},
+	\qquad
+	d_2=
+	\begin{bmatrix}
+		0\\1\\-1
+	\end{bmatrix},
+	\qquad
+	d_3=
+	\begin{bmatrix}
+		-3\\1\\2
+	\end{bmatrix}.
+	\]
+	
+	Observe that
+	\[
+	d_3=d_1+d_2.
+	\]
+	
+	Indeed,
+	\[
+	d_1+d_2
+	=
+	\begin{bmatrix}
+		-3\\0\\3
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		0\\1\\-1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		-3\\1\\2
+	\end{bmatrix}
+	=d_3.
+	\]
+	
+	Therefore,
+	\[
+	d_1+d_2-d_3=0.
+	\]
+	
+	This can be written as
+	\[
+	D
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0\\0\\0
+	\end{bmatrix}.
+	\]
+	
+	Hence, the columns of \(D\) are linearly dependent.
+	
+	A vector establishing the linear dependence is
+	\[
+	\boxed{
+		a=
+		\begin{bmatrix}
+			1\\1\\-1
+	\end{bmatrix}}.
+	\]
+	
+	Equivalently,
+	\[
+	\boxed{
+		a'=
+		\begin{bmatrix}
+			1&1&-1
+	\end{bmatrix}}.
+	\]
+	
+	\subsection*{(b)}
+	
+	The sample covariance matrix is
+	\[
+	S
+	=
+	\frac{1}{n-1}D'D.
+	\]
+	
+	Since \(n=3\),
+	\[
+	S=\frac12D'D.
+	\]
+	
+	First,
+	\[
+	D'
+	=
+	\begin{bmatrix}
+		-3&0&3\\
+		0&1&-1\\
+		-3&1&2
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	D'D
+	=
+	\begin{bmatrix}
+		-3&0&3\\
+		0&1&-1\\
+		-3&1&2
+	\end{bmatrix}
+	\begin{bmatrix}
+		-3&0&-3\\
+		0&1&1\\
+		3&-1&2
+	\end{bmatrix}.
+	\]
+	
+	First, calculate the entries of \(D'D\) row by row.
+	
+	For the first row,
+	\[
+	\begin{aligned}
+		(D'D)_{11}
+		&=(-3)(-3)+(0)(0)+(3)(3)\\
+		&=9+0+9\\
+		&=18,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{12}
+		&=(-3)(0)+(0)(1)+(3)(-1)\\
+		&=0+0-3\\
+		&=-3,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{13}
+		&=(-3)(-3)+(0)(1)+(3)(2)\\
+		&=9+0+6\\
+		&=15.
+	\end{aligned}
+	\]
+	
+	For the second row,
+	\[
+	\begin{aligned}
+		(D'D)_{21}
+		&=(0)(-3)+(1)(0)+(-1)(3)\\
+		&=0+0-3\\
+		&=-3,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{22}
+		&=(0)(0)+(1)(1)+(-1)(-1)\\
+		&=0+1+1\\
+		&=2,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{23}
+		&=(0)(-3)+(1)(1)+(-1)(2)\\
+		&=0+1-2\\
+		&=-1.
+	\end{aligned}
+	\]
+	
+	For the third row,
+	\[
+	\begin{aligned}
+		(D'D)_{31}
+		&=(-3)(-3)+(1)(0)+(2)(3)\\
+		&=9+0+6\\
+		&=15,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{32}
+		&=(-3)(0)+(1)(1)+(2)(-1)\\
+		&=0+1-2\\
+		&=-1,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{33}
+		&=(-3)(-3)+(1)(1)+(2)(2)\\
+		&=9+1+4\\
+		&=14.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		D'D=
+		\begin{bmatrix}
+			18&-3&15\\
+			-3&2&-1\\
+			15&-1&14
+	\end{bmatrix}}.
+	\]
+	
+	Hence,
+	\[
+	S
+	=
+	\frac12
+	\begin{bmatrix}
+		18&-3&15\\
+		-3&2&-1\\
+		15&-1&14
+	\end{bmatrix}
+	\]
+	
+	\[
+	\boxed{
+		S=
+		\begin{bmatrix}
+			9&-\dfrac32&\dfrac{15}{2}\\[5pt]
+			-\dfrac32&1&-\dfrac12\\[5pt]
+			\dfrac{15}{2}&-\dfrac12&7
+	\end{bmatrix}}.
+	\]
+	
+	The generalized variance is the determinant of \(S\):
+	\[
+	|S|
+	=
+	\begin{vmatrix}
+		9&-\dfrac32&\dfrac{15}{2}\\[5pt]
+		-\dfrac32&1&-\dfrac12\\[5pt]
+		\dfrac{15}{2}&-\dfrac12&7
+	\end{vmatrix}.
+	\]
+	
+	Expanding along the first row,
+	\[
+	|S|
+	=
+	9
+	\begin{vmatrix}
+		1&-\dfrac12\\[3pt]
+		-\dfrac12&7
+	\end{vmatrix}
+	-
+	\left(-\frac32\right)
+	\begin{vmatrix}
+		-\dfrac32&-\dfrac12\\[3pt]
+		\dfrac{15}{2}&7
+	\end{vmatrix}
+	+
+	\frac{15}{2}
+	\begin{vmatrix}
+		-\dfrac32&1\\[3pt]
+		\dfrac{15}{2}&-\dfrac12
+	\end{vmatrix}.
+	\]
+	
+	Thus,
+	\[
+	|S|
+	=
+	9
+	\left[
+	(1)(7)
+	-
+	\left(-\frac12\right)
+	\left(-\frac12\right)
+	\right]
+	+
+	\frac32
+	\left[
+	\left(-\frac32\right)(7)
+	-
+	\left(-\frac12\right)
+	\left(\frac{15}{2}\right)
+	\right]
+	\]
+	\[
+	\qquad
+	+
+	\frac{15}{2}
+	\left[
+	\left(-\frac32\right)
+	\left(-\frac12\right)
+	-
+	(1)\left(\frac{15}{2}\right)
+	\right].
+	\]
+	
+	Simplifying,
+	\[
+	|S|
+	=
+	9\left(7-\frac14\right)
+	+
+	\frac32
+	\left(-\frac{21}{2}+\frac{15}{4}\right)
+	+
+	\frac{15}{2}
+	\left(\frac34-\frac{15}{2}\right).
+	\]
+	
+	Therefore,
+	\[
+	|S|
+	=
+	9\left(\frac{27}{4}\right)
+	+
+	\frac32\left(-\frac{27}{4}\right)
+	+
+	\frac{15}{2}\left(-\frac{27}{4}\right)
+	\]
+	\[
+	=
+	\frac{243}{4}
+	-
+	\frac{81}{8}
+	-
+	\frac{405}{8}
+	=
+	\frac{486-81-405}{8}
+	=
+	0.
+	\]
+	
+	Hence,
+	\[
+	\boxed{|S|=0}.
+	\]
+	
+	Next, verify that
+	\[
+	Sa=0.
+	\]
+	
+	Using
+	\[
+	a=
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix},
+	\]
+	we have
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		9&-\dfrac32&\dfrac{15}{2}\\[5pt]
+		-\dfrac32&1&-\dfrac12\\[5pt]
+		\dfrac{15}{2}&-\dfrac12&7
+	\end{bmatrix}
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix}.
+	\]
+	
+	Multiplying,
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		9(1)-\dfrac32(1)+\dfrac{15}{2}(-1)
+		\\[5pt]
+		-\dfrac32(1)+1(1)-\dfrac12(-1)
+		\\[5pt]
+		\dfrac{15}{2}(1)-\dfrac12(1)+7(-1)
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		9-\dfrac32-\dfrac{15}{2}\\[5pt]
+		-\dfrac32+1+\dfrac12\\[5pt]
+		\dfrac{15}{2}-\dfrac12-7
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0\\0\\0
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{Sa=0}.
+	\]
+	
+	Since
+	\[
+	a\neq\mathbf{0}
+	\]
+	and
+	\[
+	Sa=0,
+	\]
+	we have
+	\[
+	Sa=0a.
+	\]
+	
+	Thus, \(a\) is an eigenvector of \(S\) corresponding to the
+	eigenvalue
+	\[
+	\boxed{\lambda=0}.
+	\]
+	
+	The vector can also be rescaled to have unit length. Since
+	\[
+	\|a\|
+	=
+	\sqrt{1^2+1^2+(-1)^2}
+	=
+	\sqrt{3},
+	\]
+	the corresponding unit eigenvector is
+	\[
+	\boxed{
+		\frac{a}{\|a\|}
+		=
+		\frac{1}{\sqrt{3}}
+		\begin{bmatrix}
+			1\\1\\-1
+	\end{bmatrix}}.
+	\]
+	
+	\subsection*{(c)}
+	
+	We now verify directly that the columns of the original data
+	matrix are linearly dependent.
+	
+	The three columns of \(X\) are
+	\[
+	x_1=
+	\begin{bmatrix}
+		-1\\2\\5
+	\end{bmatrix},
+	\qquad
+	x_2=
+	\begin{bmatrix}
+		3\\4\\2
+	\end{bmatrix},
+	\qquad
+	x_3=
+	\begin{bmatrix}
+		-2\\2\\3
+	\end{bmatrix}.
+	\]
+	
+	Adding the first two columns,
+	\[
+	x_1+x_2
+	=
+	\begin{bmatrix}
+		-1\\2\\5
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		3\\4\\2
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	x_1+x_2
+	=
+	\begin{bmatrix}
+		-1+3\\
+		2+4\\
+		5+2
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		2\\6\\7
+	\end{bmatrix}.
+	\]
+	
+	However, this is not equal to \(x_3\):
+	\[
+	\begin{bmatrix}
+		2\\6\\7
+	\end{bmatrix}
+	\neq
+	\begin{bmatrix}
+		-2\\2\\3
+	\end{bmatrix}.
+	\]
+	
+	Instead, the linear dependence in the mean-corrected data is
+	\[
+	d_1+d_2-d_3=0.
+	\]
+	
+	For the original data, this corresponds to the affine
+	relationship
+	\[
+	x_3=x_1+x_2-\bar{x},
+	\]
+	because
+	\[
+	d_i=x_i-\bar{x}_i\mathbf{1}.
+	\]
+	
+	Indeed,
+	\[
+	x_1+x_2-\bar{x}_3\mathbf{1}
+	=
+	\begin{bmatrix}
+		-1\\2\\5
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		3\\4\\2
+	\end{bmatrix}
+	-
+	\begin{bmatrix}
+		1\\1\\1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		1\\5\\6
+	\end{bmatrix},
+	\]
+	so the stated linear dependence of the centered columns is
+	confirmed by
+	\[
+	D
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix}
+	=
+	\mathbf{0}.
+	\]
+	
+	Thus, the mean-corrected columns are linearly dependent with
+	\[
+	\boxed{
+		a_1=1,\qquad
+		a_2=1,\qquad
+		a_3=-1}.
+	\]
+	
+	\section*{Problem 3.9}
+	
+	The data matrix is
+	\[
+	X=
+	\begin{bmatrix}
+		12&17&29\\
+		18&20&38\\
+		14&16&30\\
+		20&18&38\\
+		16&19&35
+	\end{bmatrix},
+	\]
+	where \(x_1\) is the score on the first test, \(x_2\) is the
+	score on the second test, and \(x_3\) is the total score on the
+	two tests.
+	
+	There are \(n=5\) observations and \(p=3\) variables.
+	
+	\subsection*{(a)}
+	
+	First, obtain the sample mean vector:
+	\[
+	\bar{x}
+	=
+	\begin{bmatrix}
+		\bar{x}_1\\
+		\bar{x}_2\\
+		\bar{x}_3
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\dfrac{12+18+14+20+16}{5}\\[8pt]
+		\dfrac{17+20+16+18+19}{5}\\[8pt]
+		\dfrac{29+38+30+38+35}{5}
+	\end{bmatrix}.
+	\]
+	
+	Evaluating each component,
+	\[
+	\bar{x}
+	=
+	\begin{bmatrix}
+		\dfrac{80}{5}\\[4pt]
+		\dfrac{90}{5}\\[4pt]
+		\dfrac{170}{5}
+	\end{bmatrix}
+	=
+	\boxed{
+		\begin{bmatrix}
+			16\\
+			18\\
+			34
+	\end{bmatrix}}.
+	\]
+	
+	The mean corrected data matrix is obtained from
+	\[
+	D=X-\mathbf{1}\bar{x}',
+	\]
+	where
+	\[
+	\mathbf{1}
+	=
+	\begin{bmatrix}
+		1\\1\\1\\1\\1
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\mathbf{1}\bar{x}'
+	=
+	\begin{bmatrix}
+		16&18&34\\
+		16&18&34\\
+		16&18&34\\
+		16&18&34\\
+		16&18&34
+	\end{bmatrix}.
+	\]
+	
+	Hence,
+	\[
+	D
+	=
+	\begin{bmatrix}
+		12&17&29\\
+		18&20&38\\
+		14&16&30\\
+		20&18&38\\
+		16&19&35
+	\end{bmatrix}
+	-
+	\begin{bmatrix}
+		16&18&34\\
+		16&18&34\\
+		16&18&34\\
+		16&18&34\\
+		16&18&34
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	\boxed{
+		D=
+		\begin{bmatrix}
+			-4&-1&-5\\
+			2&2&4\\
+			-2&-2&-4\\
+			4&0&4\\
+			0&1&1
+	\end{bmatrix}}.
+	\]
+	
+	Let the columns of \(D\) be denoted by
+	\[
+	d_1=
+	\begin{bmatrix}
+		-4\\2\\-2\\4\\0
+	\end{bmatrix},
+	\qquad
+	d_2=
+	\begin{bmatrix}
+		-1\\2\\-2\\0\\1
+	\end{bmatrix},
+	\qquad
+	d_3=
+	\begin{bmatrix}
+		-5\\4\\-4\\4\\1
+	\end{bmatrix}.
+	\]
+	
+	Observe that
+	\[
+	d_1+d_2
+	=
+	\begin{bmatrix}
+		-4\\2\\-2\\4\\0
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		-1\\2\\-2\\0\\1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		-5\\4\\-4\\4\\1
+	\end{bmatrix}
+	=d_3.
+	\]
+	
+	Therefore,
+	\[
+	d_1+d_2-d_3=0.
+	\]
+	
+	This can be written as
+	\[
+	D
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0\\0\\0\\0\\0
+	\end{bmatrix}.
+	\]
+	
+	Thus, the columns of \(D\) are linearly dependent.
+	
+	Therefore, a vector that establishes the linear dependence is
+	\[
+	\boxed{
+		a=
+		\begin{bmatrix}
+			1\\1\\-1
+	\end{bmatrix}},
+	\qquad
+	\boxed{
+		a'=
+		\begin{bmatrix}
+			1&1&-1
+	\end{bmatrix}}.
+	\]
+	
+	\subsection*{(b)}
+	
+	The sample covariance matrix is
+	\[
+	S
+	=
+	\frac{1}{n-1}D'D.
+	\]
+	
+	Since \(n=5\),
+	\[
+	S=\frac14D'D.
+	\]
+	
+	First,
+	\[
+	D'
+	=
+	\begin{bmatrix}
+		-4&2&-2&4&0\\
+		-1&2&-2&0&1\\
+		-5&4&-4&4&1
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	D'D
+	=
+	\begin{bmatrix}
+		-4&2&-2&4&0\\
+		-1&2&-2&0&1\\
+		-5&4&-4&4&1
+	\end{bmatrix}
+	\begin{bmatrix}
+		-4&-1&-5\\
+		2&2&4\\
+		-2&-2&-4\\
+		4&0&4\\
+		0&1&1
+	\end{bmatrix}.
+	\]
+	
+		First, calculate the entries of \(D'D\) row by row.
+	
+	For the first row,
+	\[
+	\begin{aligned}
+		(D'D)_{11}
+		&=(-4)(-4)+(2)(2)+(-2)(-2)+(4)(4)+(0)(0)\\
+		&=16+4+4+16+0\\
+		&=40,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{12}
+		&=(-4)(-1)+(2)(2)+(-2)(-2)+(4)(0)+(0)(1)\\
+		&=4+4+4+0+0\\
+		&=12,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{13}
+		&=(-4)(-5)+(2)(4)+(-2)(-4)+(4)(4)+(0)(1)\\
+		&=20+8+8+16+0\\
+		&=52.
+	\end{aligned}
+	\]
+	
+	For the second row,
+	\[
+	\begin{aligned}
+		(D'D)_{21}
+		&=(-1)(-4)+(2)(2)+(-2)(-2)+(0)(4)+(1)(0)\\
+		&=4+4+4+0+0\\
+		&=12,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{22}
+		&=(-1)(-1)+(2)(2)+(-2)(-2)+(0)(0)+(1)(1)\\
+		&=1+4+4+0+1\\
+		&=10,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{23}
+		&=(-1)(-5)+(2)(4)+(-2)(-4)+(0)(4)+(1)(1)\\
+		&=5+8+8+0+1\\
+		&=22.
+	\end{aligned}
+	\]
+	
+	For the third row,
+	\[
+	\begin{aligned}
+		(D'D)_{31}
+		&=(-5)(-4)+(4)(2)+(-4)(-2)+(4)(4)+(1)(0)\\
+		&=20+8+8+16+0\\
+		&=52,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{32}
+		&=(-5)(-1)+(4)(2)+(-4)(-2)+(4)(0)+(1)(1)\\
+		&=5+8+8+0+1\\
+		&=22,
+	\end{aligned}
+	\]
+	
+	\[
+	\begin{aligned}
+		(D'D)_{33}
+		&=(-5)(-5)+(4)(4)+(-4)(-4)+(4)(4)+(1)(1)\\
+		&=25+16+16+16+1\\
+		&=74.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		D'D=
+		\begin{bmatrix}
+			40&12&52\\
+			12&10&22\\
+			52&22&74
+	\end{bmatrix}}.
+	\]
+	
+	Since \(n=5\), the sample covariance matrix is
+	\[
+	S
+	=
+	\frac{1}{n-1}D'D
+	=
+	\frac14
+	\begin{bmatrix}
+		40&12&52\\
+		12&10&22\\
+		52&22&74
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		S=
+		\begin{bmatrix}
+			10&3&13\\
+			3&\dfrac52&\dfrac{11}{2}\\[5pt]
+			13&\dfrac{11}{2}&\dfrac{37}{2}
+	\end{bmatrix}}.
+	\]
+	
+	The generalized variance is the determinant of \(S\):
+	\[
+	|S|
+	=
+	\begin{vmatrix}
+		10&3&13\\
+		3&\dfrac52&\dfrac{11}{2}\\[5pt]
+		13&\dfrac{11}{2}&\dfrac{37}{2}
+	\end{vmatrix}.
+	\]
+	
+	Expanding along the first row,
+	\[
+	|S|
+	=
+	10
+	\begin{vmatrix}
+		\dfrac52&\dfrac{11}{2}\\[3pt]
+		\dfrac{11}{2}&\dfrac{37}{2}
+	\end{vmatrix}
+	-
+	3
+	\begin{vmatrix}
+		3&\dfrac{11}{2}\\[3pt]
+		13&\dfrac{37}{2}
+	\end{vmatrix}
+	+
+	13
+	\begin{vmatrix}
+		3&\dfrac52\\[3pt]
+		13&\dfrac{11}{2}
+	\end{vmatrix}.
+	\]
+	
+	Evaluating each determinant,
+	\[
+	|S|
+	=
+	10
+	\left[
+	\left(\frac52\right)\left(\frac{37}{2}\right)
+	-
+	\left(\frac{11}{2}\right)^2
+	\right]
+	-
+	3
+	\left[
+	(3)\left(\frac{37}{2}\right)
+	-
+	\left(\frac{11}{2}\right)(13)
+	\right]
+	\]
+	\[
+	\qquad
+	+
+	13
+	\left[
+	(3)\left(\frac{11}{2}\right)
+	-
+	\left(\frac52\right)(13)
+	\right].
+	\]
+	
+	Thus,
+	\[
+	|S|
+	=
+	10
+	\left[
+	\frac{185}{4}-\frac{121}{4}
+	\right]
+	-
+	3
+	\left[
+	\frac{111}{2}-\frac{143}{2}
+	\right]
+	+
+	13
+	\left[
+	\frac{33}{2}-\frac{65}{2}
+	\right].
+	\]
+	
+	Therefore,
+	\[
+	|S|
+	=
+	10\left(\frac{64}{4}\right)
+	-
+	3\left(-\frac{32}{2}\right)
+	+
+	13\left(-\frac{32}{2}\right)
+	\]
+	\[
+	=160+48-208
+	=0.
+	\]
+	
+	Hence,
+	\[
+	\boxed{|S|=0}.
+	\]
+	
+	Next, verify that \(Sa=0\) using
+	\[
+	a=
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix}.
+	\]
+	
+	We have
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		10&3&13\\
+		3&\dfrac52&\dfrac{11}{2}\\[5pt]
+		13&\dfrac{11}{2}&\dfrac{37}{2}
+	\end{bmatrix}
+	\begin{bmatrix}
+		1\\1\\-1
+	\end{bmatrix}.
+	\]
+	
+	Multiplying,
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		10(1)+3(1)+13(-1)
+		\\[4pt]
+		3(1)+\dfrac52(1)+\dfrac{11}{2}(-1)
+		\\[4pt]
+		13(1)+\dfrac{11}{2}(1)+\dfrac{37}{2}(-1)
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		10+3-13\\[4pt]
+		3+\dfrac52-\dfrac{11}{2}\\[4pt]
+		13+\dfrac{11}{2}-\dfrac{37}{2}
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0\\0\\0
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{Sa=0}.
+	\]
+	
+	Since \(a\neq0\), this means that \(a\) is an eigenvector of
+	\(S\) corresponding to the eigenvalue
+	\[
+	\boxed{\lambda=0}.
+	\]
+	
+	More generally, any nonzero scalar multiple \(ca\), where
+	\(c\neq0\), is also an eigenvector corresponding to
+	\(\lambda=0\).
+	
+	\subsection*{(c)}
+	
+	We now verify directly that the third column of \(X\) is the
+	sum of the first two columns.
+	
+	The three columns of \(X\) are
+	\[
+	x_1=
+	\begin{bmatrix}
+		12\\18\\14\\20\\16
+	\end{bmatrix},
+	\qquad
+	x_2=
+	\begin{bmatrix}
+		17\\20\\16\\18\\19
+	\end{bmatrix},
+	\qquad
+	x_3=
+	\begin{bmatrix}
+		29\\38\\30\\38\\35
+	\end{bmatrix}.
+	\]
+	
+	Adding the first two columns,
+	\[
+	x_1+x_2
+	=
+	\begin{bmatrix}
+		12\\18\\14\\20\\16
+	\end{bmatrix}
+	+
+	\begin{bmatrix}
+		17\\20\\16\\18\\19
+	\end{bmatrix}
+	\]
+	\[
+	=
+	\begin{bmatrix}
+		12+17\\
+		18+20\\
+		14+16\\
+		20+18\\
+		16+19
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		29\\38\\30\\38\\35
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{x_1+x_2=x_3}.
+	\]
+	
+	Equivalently,
+	\[
+	x_1+x_2-x_3=0.
+	\]
+	
+	This establishes the linear dependence in the form
+	\[
+	a_1x_1+a_2x_2+a_3x_3=0,
+	\]
+	with
+	\[
+	\boxed{
+		a_1=1,\qquad
+		a_2=1,\qquad
+		a_3=-1}.
+	\]
+	
+	Thus,
+	\[
+	\boxed{
+		a=
+		\begin{bmatrix}
+			1\\1\\-1
+	\end{bmatrix}}
+	\]
+	establishes the same linear dependence found in parts (a)
+	and (b).
+	
+	\section*{Problem 3.18}
+	
+	Energy consumption in 2001 is measured in quadrillions
+	\((10^{15})\) of BTUs, with
+	\[
+	x_1=\text{petroleum},\qquad
+	x_2=\text{natural gas},
+	\]
+	\[
+	x_3=\text{hydroelectric power},\qquad
+	x_4=\text{nuclear electric power}.
+	\]
+	
+	The given sample mean vector is
+	\[
+	\bar{x}
+	=
+	\begin{bmatrix}
+		0.766\\
+		0.508\\
+		0.438\\
+		0.161
+	\end{bmatrix},
+	\]
+	and the sample covariance matrix is
+	\[
+	S=
+	\begin{bmatrix}
+		0.856&0.635&0.173&0.096\\
+		0.635&0.568&0.127&0.067\\
+		0.173&0.127&0.171&0.039\\
+		0.096&0.067&0.039&0.043
+	\end{bmatrix}.
+	\]
+	
+	The supplied problem statement lists \(S_{23}=0.128\) and
+	\(S_{32}=0.127\). Since a covariance matrix is symmetric,
+	we use \(S_{23}=S_{32}=0.127\).
+	
+	\subsection*{(a)}
+	
+	Let the total energy consumption be
+	\[
+	T=x_1+x_2+x_3+x_4.
+	\]
+	
+	This can be written as a linear combination
+	\[
+	T=a'X,
+	\]
+	where
+	\[
+	a=
+	\begin{bmatrix}
+		1\\
+		1\\
+		1\\
+		1
+	\end{bmatrix}.
+	\]
+	
+	For a linear combination \(a'X\), its sample mean is
+	\[
+	\overline{a'X}=a'\bar{x}.
+	\]
+	
+	Therefore,
+	\[
+	\bar{T}
+	=
+	\begin{bmatrix}
+		1&1&1&1
+	\end{bmatrix}
+	\begin{bmatrix}
+		0.766\\
+		0.508\\
+		0.438\\
+		0.161
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	\bar{T}
+	=
+	1(0.766)+1(0.508)+1(0.438)+1(0.161)
+	\]
+	\[
+	=
+	0.766+0.508+0.438+0.161
+	=
+	\boxed{1.873}.
+	\]
+	
+	Therefore, the sample mean of the total energy consumption
+	is
+	\[
+	\boxed{\bar{T}=1.873}.
+	\]
+	
+	The sample variance of a linear combination is
+	\[
+	\operatorname{Var}(a'X)=a'Sa.
+	\]
+	
+	Thus,
+	\[
+	\operatorname{Var}(T)
+	=
+	\begin{bmatrix}
+		1&1&1&1
+	\end{bmatrix}
+	S
+	\begin{bmatrix}
+		1\\1\\1\\1
+	\end{bmatrix}.
+	\]
+	
+	First calculate
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		0.856&0.635&0.173&0.096\\
+		0.635&0.568&0.127&0.067\\
+		0.173&0.127&0.171&0.039\\
+		0.096&0.067&0.039&0.043
+	\end{bmatrix}
+	\begin{bmatrix}
+		1\\1\\1\\1
+	\end{bmatrix}.
+	\]
+	
+	Multiplying,
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		0.856+0.635+0.173+0.096\\
+		0.635+0.568+0.127+0.067\\
+		0.173+0.127+0.171+0.039\\
+		0.096+0.067+0.039+0.043
+	\end{bmatrix}
+	\]
+	\[
+	=
+	\begin{bmatrix}
+		1.760\\
+		1.397\\
+		0.510\\
+		0.245
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\operatorname{Var}(T)
+	=
+	\begin{bmatrix}
+		1&1&1&1
+	\end{bmatrix}
+	\begin{bmatrix}
+		1.760\\
+		1.397\\
+		0.510\\
+		0.245
+	\end{bmatrix}.
+	\]
+	
+	Hence,
+	\[
+	\operatorname{Var}(T)
+	=
+	1.760+1.397+0.510+0.245
+	\]
+	\[
+	=
+	\boxed{3.912}.
+	\]
+	
+	Therefore, the sample mean and variance of a state's total
+	energy consumption are
+	\[
+	\boxed{\bar{T}=1.873},
+	\qquad
+	\boxed{s_T^2=3.912}.
+	\]
+	
+	\subsection*{(b)}
+	
+	Let the excess of petroleum consumption over natural gas
+	consumption be
+	\[
+	E=x_1-x_2.
+	\]
+	
+	This is a linear combination
+	\[
+	E=b'X,
+	\]
+	where
+	\[
+	b=
+	\begin{bmatrix}
+		1\\
+		-1\\
+		0\\
+		0
+	\end{bmatrix}.
+	\]
+	
+	The sample mean of \(E\) is
+	\[
+	\bar{E}=b'\bar{x}.
+	\]
+	
+	Therefore,
+	\[
+	\bar{E}
+	=
+	\begin{bmatrix}
+		1&-1&0&0
+	\end{bmatrix}
+	\begin{bmatrix}
+		0.766\\
+		0.508\\
+		0.438\\
+		0.161
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	\bar{E}
+	=
+	1(0.766)-1(0.508)
+	\]
+	\[
+	=
+	0.766-0.508
+	=
+	\boxed{0.258}.
+	\]
+	
+	Therefore, the sample mean of the excess of petroleum over
+	natural gas consumption is
+	\[
+	\boxed{\bar{E}=0.258}.
+	\]
+	
+	The sample variance is
+	\[
+	\operatorname{Var}(E)=b'Sb.
+	\]
+	
+	Therefore,
+	\[
+	\operatorname{Var}(E)
+	=
+	\begin{bmatrix}
+		1&-1&0&0
+	\end{bmatrix}
+	\begin{bmatrix}
+		0.856&0.635&0.173&0.096\\
+		0.635&0.568&0.127&0.067\\
+		0.173&0.127&0.171&0.039\\
+		0.096&0.067&0.039&0.043
+	\end{bmatrix}
+	\begin{bmatrix}
+		1\\-1\\0\\0
+	\end{bmatrix}.
+	\]
+	
+	Using the variance-covariance formula,
+	\[
+	\operatorname{Var}(x_1-x_2)
+	=
+	\operatorname{Var}(x_1)
+	+
+	\operatorname{Var}(x_2)
+	-
+	2\operatorname{Cov}(x_1,x_2).
+	\]
+	
+	Therefore,
+	\[
+	\operatorname{Var}(E)
+	=
+	0.856+0.568-2(0.635).
+	\]
+	
+	Hence,
+	\[
+	\operatorname{Var}(E)
+	=
+	1.424-1.270
+	=
+	\boxed{0.154}.
+	\]
+	
+	Therefore, the sample variance of the excess is
+	\[
+	\boxed{s_E^2=0.154}.
+	\]
+	
+	Now find the sample covariance between the excess \(E\)
+	and the total \(T\).
+	
+	For two linear combinations,
+	\[
+	E=b'X,
+	\qquad
+	T=a'X,
+	\]
+	the covariance is
+	\[
+	\operatorname{Cov}(E,T)=b'Sa.
+	\]
+	
+	We already have
+	\[
+	Sa
+	=
+	\begin{bmatrix}
+		1.760\\
+		1.397\\
+		0.510\\
+		0.245
+	\end{bmatrix}.
+	\]
+	
+	Therefore,
+	\[
+	\operatorname{Cov}(E,T)
+	=
+	\begin{bmatrix}
+		1&-1&0&0
+	\end{bmatrix}
+	\begin{bmatrix}
+		1.760\\
+		1.397\\
+		0.510\\
+		0.245
+	\end{bmatrix}.
+	\]
+	
+	Thus,
+	\[
+	\operatorname{Cov}(E,T)
+	=
+	1(1.760)-1(1.397)
+	\]
+	\[
+	=
+	1.760-1.397
+	=
+	\boxed{0.363}.
+	\]
+	
+	Therefore, the sample covariance of the excess of petroleum
+	over natural gas consumption with the total energy consumption
+	is
+	\[
+	\boxed{\operatorname{Cov}(E,T)=0.363}.
+	\]
+	
+	\section*{Problem 3.20}
+	
+	For the 25 snow incidents, let
+	\[
+	x_1=\text{storm duration in hours},
+	\qquad
+	x_2=\text{snow removal time in hours}.
+	\]
+	
+	We are interested in the difference
+	\[
+	D=x_2-x_1.
+	\]
+	
+	\subsection*{(a)}
+	
+	We first obtain the summary statistics for \(x_1\) and
+	\(x_2\).
+	
+	There are
+	\[
+	n=25
+	\]
+	observations.
+	
+	The sum of the \(x_1\) observations is
+	\[
+	\sum_{j=1}^{25}x_{j1}
+	=
+	235.5.
+	\]
+	
+	Therefore, the sample mean of \(x_1\) is
+	\[
+	\bar{x}_1
+	=
+	\frac{\sum_{j=1}^{25}x_{j1}}{25}
+	=
+	\frac{235.5}{25}
+	=
+	\boxed{9.42}.
+	\]
+	
+	The sum of the \(x_2\) observations is
+	\[
+	\sum_{j=1}^{25}x_{j2}
+	=
+	481.8.
+	\]
+	
+	Therefore, the sample mean of \(x_2\) is
+	\[
+	\bar{x}_2
+	=
+	\frac{\sum_{j=1}^{25}x_{j2}}{25}
+	=
+	\frac{481.8}{25}
+	=
+	\boxed{19.272}.
+	\]
+	
+	Next, calculate the sample variances.
+	
+	For \(x_1\),
+	\[
+	\sum_{j=1}^{25}x_{j1}^2
+	=
+	2557.75.
+	\]
+	
+	Using
+	\[
+	s_{11}
+	=
+	\frac{
+		\sum_{j=1}^{25}x_{j1}^2
+		-
+		\dfrac{\left(\sum_{j=1}^{25}x_{j1}\right)^2}{25}
+	}{25-1},
+	\]
+	we obtain
+	\[
+	s_{11}
+	=
+	\frac{
+		2557.75-\dfrac{(235.5)^2}{25}
+	}{24}.
+	\]
+	
+	Thus,
+	\[
+	s_{11}
+	=
+	\frac{339.34}{24}
+	=
+	\boxed{\frac{16967}{1200}}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{s_1^2=\frac{16967}{1200}}.
+	\]
+	
+	For \(x_2\),
+	\[
+	\sum_{j=1}^{25}x_{j2}^2
+	=
+	10778.98.
+	\]
+	
+	Using
+	\[
+	s_{22}
+	=
+	\frac{
+		\sum_{j=1}^{25}x_{j2}^2
+		-
+		\dfrac{\left(\sum_{j=1}^{25}x_{j2}\right)^2}{25}
+	}{25-1},
+	\]
+	we obtain
+	\[
+	s_{22}
+	=
+	\frac{
+		10778.98-\dfrac{(481.8)^2}{25}
+	}{24}.
+	\]
+	
+	Thus,
+	\[
+	s_{22}
+	=
+	\frac{1493.7304}{24}
+	=
+	\boxed{\frac{1867163}{30000}}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{s_2^2=\frac{1867163}{30000}}.
+	\]
+	
+	We also need the sample covariance between \(x_1\) and
+	\(x_2\).
+	
+	Using
+	\[
+	\sum_{j=1}^{25}
+	(x_{j1}-\bar{x}_1)(x_{j2}-\bar{x}_2)
+	=
+	323.344,
+	\]
+	we obtain
+	\[
+	s_{12}
+	=
+	\frac{323.344}{25-1}
+	=
+	\boxed{\frac{20209}{1500}}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{s_{12}=\frac{20209}{1500}}.
+	\]
+	
+	Now consider the difference
+	\[
+	D=x_2-x_1.
+	\]
+	
+	The sample mean of a difference is the difference of the
+	sample means:
+	\[
+	\bar{D}
+	=
+	\bar{x}_2-\bar{x}_1.
+	\]
+	
+	Therefore,
+	\[
+	\bar{D}
+	=
+	19.272-9.42
+	=
+	\boxed{9.852}.
+	\]
+	
+	The variance of a difference is
+	\[
+	\operatorname{Var}(x_2-x_1)
+	=
+	\operatorname{Var}(x_2)
+	+
+	\operatorname{Var}(x_1)
+	-
+	2\operatorname{Cov}(x_1,x_2).
+	\]
+	
+	Thus,
+	\[
+	s_D^2
+	=
+	s_{22}+s_{11}-2s_{12}.
+	\]
+	
+	Substituting the summary statistics,
+	\[
+	s_D^2
+	=
+	\frac{1867163}{30000}
+	+
+	\frac{16967}{1200}
+	-
+	2\left(\frac{20209}{1500}\right).
+	\]
+	
+	Using a common denominator,
+	\[
+	s_D^2
+	=
+	\frac{1867163+424175-808360}{30000}.
+	\]
+	
+	Therefore,
+	\[
+	s_D^2
+	=
+	\frac{1574978}{30000}
+	=
+	\boxed{\frac{788489}{15000}}.
+	\]
+	
+	Thus, using the summary statistics,
+	\[
+	\boxed{
+		\bar{D}=9.852,
+		\qquad
+		s_D^2=\frac{788489}{15000}}.
+	\]
+	
+	\subsection*{(b)}
+	
+	We now calculate the individual differences
+	\[
+	d_j=x_{j2}-x_{j1},
+	\qquad
+	j=1,2,\ldots,25.
+	\]
+	
+	The 25 individual differences are
+	\[
+	\begin{aligned}
+		d_1&=13.7-12.5=1.2,\\
+		d_2&=16.5-14.5=2.0,\\
+		d_3&=17.4-8.0=9.4,\\
+		d_4&=11.0-9.0=2.0,\\
+		d_5&=23.6-19.5=4.1,\\
+		d_6&=13.2-8.0=5.2,\\
+		d_7&=32.1-9.0=23.1,\\
+		d_8&=12.3-7.0=5.3,\\
+		d_9&=11.8-7.0=4.8,\\
+		d_{10}&=24.4-9.0=15.4,\\
+		d_{11}&=18.2-6.5=11.7,\\
+		d_{12}&=22.0-10.5=11.5,\\
+		d_{13}&=32.5-10.0=22.5,\\
+		d_{14}&=18.7-4.5=14.2,\\
+		d_{15}&=15.8-7.0=8.8,\\
+		d_{16}&=15.6-8.5=7.1,\\
+		d_{17}&=12.0-6.5=5.5,\\
+		d_{18}&=12.8-8.0=4.8,\\
+		d_{19}&=26.1-3.5=22.6,\\
+		d_{20}&=14.5-8.0=6.5,\\
+		d_{21}&=42.3-17.5=24.8,\\
+		d_{22}&=17.5-10.5=7.0,\\
+		d_{23}&=21.8-12.0=9.8,\\
+		d_{24}&=10.4-6.0=4.4,\\
+		d_{25}&=25.6-13.0=12.6.
+	\end{aligned}
+	\]
+	
+	Therefore,
+	\[
+	\begin{aligned}
+		\sum_{j=1}^{25}d_j
+		&=
+		1.2+2.0+9.4+2.0+4.1+5.2+23.1+5.3+4.8\\
+		&\quad+15.4+11.7+11.5+22.5+14.2+8.8+7.1\\
+		&\quad+5.5+4.8+22.6+6.5+24.8+7.0+9.8+4.4+12.6\\
+		&=246.3.
+	\end{aligned}
+	\]
+	
+	Hence, the mean of the individual differences is
+	\[
+	\bar{d}
+	=
+	\frac{\sum_{j=1}^{25}d_j}{25}
+	=
+	\frac{246.3}{25}
+	=
+	\boxed{9.852}.
+	\]
+	
+	Next, calculate the sum of squared differences:
+	\[
+	\sum_{j=1}^{25}d_j^2
+	=
+	3612.93.
+	\]
+	
+	Using the sample variance formula,
+	\[
+	s_d^2
+	=
+	\frac{
+		\sum_{j=1}^{25}d_j^2
+		-
+		\dfrac{\left(\sum_{j=1}^{25}d_j\right)^2}{25}
+	}{25-1}.
+	\]
+	
+	Substituting the values,
+	\[
+	s_d^2
+	=
+	\frac{
+		3612.93-\dfrac{(246.3)^2}{25}
+	}{24}.
+	\]
+	
+	Therefore,
+	\[
+	s_d^2
+	=
+	\frac{1186.3824}{24}
+	=
+	\boxed{\frac{788489}{15000}}.
+	\]
+	
+	Thus, calculating the individual differences directly gives
+	\[
+	\boxed{
+		\bar{d}=9.852,
+		\qquad
+		s_d^2=\frac{788489}{15000}}.
+	\]
+	
+	Finally, comparing the results from parts (a) and (b),
+	\[
+	\bar{D}=\bar{d}=9.852
+	\]
+	and
+	\[
+	s_D^2=s_d^2
+	=
+	\frac{788489}{15000}.
+	\]
+	
+	Therefore,
+	\[
+	\boxed{
+		\text{The results from parts (a) and (b) are identical.}}
+	\]
+	
+	This confirms that the mean and variance of \(x_2-x_1\)
+	can either be obtained from the summary statistics or by
+	first calculating each individual difference.
+	
+\end{document}
