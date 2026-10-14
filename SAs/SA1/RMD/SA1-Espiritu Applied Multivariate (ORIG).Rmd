@@ -1,0 +1,2256 @@
+---
+title: |
+  Multivariate Analysis of the Wine Quality Dataset
+subtitle: |
+  Summative Assessment 1
+author: |
+  Espiritu, Joseph Raphael, M.
+date: "October 14, 2026"
+
+output:
+
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    number_sections: true
+    fig_caption: true
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+    code_folding: show
+    theme: flatly
+    highlight: tango
+
+geometry: margin=0.8in
+fontsize: 11pt
+
+header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{booktabs}
+  - \usepackage{float}
+  - \usepackage{setspace}
+  - \usepackage{graphicx}
+  - \onehalfspacing
+---
+
+**FAR EASTERN UNIVERSITY**\
+Institute / Program: Applied Mathematics\
+Course: APM1220 — Applied Multivariate Data Analysis
+
+**Submitted by:**\
+Espiritu, Joseph Raphael, M.
+
+**Submitted to:**\
+Gella, Frederick
+
+**Date of Submission:**\
+October 14, 2026
+
+------------------------------------------------------------------------
+
+```{r setup, include=FALSE}
+# ============================================================
+# 1. CHECK AND INSTALL REQUIRED PACKAGES
+# ============================================================
+
+required_packages <- c(
+  "tidyverse",
+  "janitor",
+  "GGally",
+  "corrplot",
+  "biotools",
+  "effectsize",
+  "psych",
+  "GPArotation",
+  "knitr",
+  "kableExtra"
+)
+
+# Identify packages that are not yet installed
+installed_packages <- rownames(installed.packages())
+
+missing_packages <- setdiff(
+  required_packages,
+  installed_packages
+)
+
+# Install missing packages from CRAN
+if (length(missing_packages) > 0) {
+  install.packages(
+    missing_packages,
+    repos = "https://cloud.r-project.org"
+  )
+}
+
+# Verify that all required packages are available
+package_status <- vapply(
+  required_packages,
+  requireNamespace,
+  logical(1),
+  quietly = TRUE
+)
+
+if (any(!package_status)) {
+  stop(
+    "The following packages are unavailable: ",
+    paste(
+      names(package_status)[!package_status],
+      collapse = ", "
+    ),
+    ". Please install them manually before continuing."
+  )
+}
+
+# ============================================================
+# 2. SET R MARKDOWN OPTIONS
+# ============================================================
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5,
+  out.width = "90%"
+)
+
+# Set a reproducible random seed
+set.seed(1220)
+
+# ============================================================
+# 3. LOAD REQUIRED LIBRARIES
+# ============================================================
+
+# Data preparation and visualization
+library(tidyverse)
+library(janitor)
+library(GGally)
+library(corrplot)
+
+# Multivariate statistical analysis
+library(biotools)
+library(effectsize)
+
+# PCA and exploratory factor analysis
+library(psych)
+library(GPArotation)
+
+# Report formatting
+library(knitr)
+library(kableExtra)
+```
+
+# Introduction
+
+Wine quality is associated with various physicochemical characteristics, including acidity, residual sugar, chloride concentration, sulfur dioxide levels, density, sulphates, and alcohol content. These characteristics provide measurable information about the chemical composition of wine and may vary between red and white wines. The UCI Wine Quality Dataset contains physicochemical measurements and sensory quality scores for Portuguese Vinho Verde wines, providing a basis for investigating relationships among these variables and differences between wine types (Cortez et al., 2009).
+
+This study aims to investigate the physicochemical characteristics of red and white wines through exploratory data analysis and three multivariate statistical techniques: Multivariate Analysis of Variance (MANOVA), Principal Component Analysis (PCA), and Exploratory Factor Analysis (EFA). MANOVA will examine whether the combined physicochemical characteristics differ between red and white wines, while PCA will determine whether the 11 physicochemical variables can be summarized using fewer components while retaining substantial variability. EFA will further investigate the underlying factors that may explain the relationships among these measurements. Through these analyses, the study seeks to develop a clearer understanding of the multivariate structure of wine characteristics and demonstrate the application of statistical methods to real-world data.
+
+# Dataset Description and Preparation
+
+## Dataset Description
+
+This study uses the Wine Quality Dataset, which contains physicochemical measurements of Portuguese Vinho Verde red and white wines. The data are provided in two separate CSV files, one for red wine and another for white wine. Each observation represents a wine sample described by 11 physicochemical variables and a sensory quality score. The two datasets will be combined into a single dataset, with an additional categorical variable named `color` to distinguish red wines from white wines.
+
+The combined dataset will be used for exploratory data analysis and the subsequent multivariate analyses. The `color` variable will serve as the grouping variable for MANOVA, while the 11 physicochemical measurements will be used as the input variables for PCA and EFA. The `quality` score will be retained for descriptive analysis but excluded from PCA and EFA, as required by the study design. Before proceeding, the data will be checked for correct dimensions, missing values, and duplicate observations to establish the dataset's suitability for further analysis.
+
+## Data Import and Combination
+
+The red and white wine datasets are imported separately and then combined by rows. A categorical variable, `color`, is added to identify the wine type. Column names are standardized using the `janitor` package to make the variables easier to reference during analysis.
+
+```{r data-import}
+# Define the relative path to the data folder
+data_dir <- file.path("..", "data")
+
+red_file <- file.path(data_dir, "winequality-red.csv")
+white_file <- file.path(data_dir, "winequality-white.csv")
+
+# Import red wine data
+red_wine <- read.csv(red_file, sep = ";") |>
+  janitor::clean_names() |>
+  dplyr::mutate(color = "Red")
+
+# Import white wine data
+white_wine <- read.csv(white_file, sep = ";") |>
+  janitor::clean_names() |>
+  dplyr::mutate(color = "White")
+
+# Combine datasets
+wine_data <- dplyr::bind_rows(red_wine, white_wine) |>
+  dplyr::mutate(
+    color = factor(color, levels = c("Red", "White"))
+  )
+
+# Display the first six observations
+knitr::kable(
+  head(wine_data),
+  caption = "First Six Observations of the Combined Wine Dataset",
+  digits = 3,
+  format = "html",
+  table.attr = 'style="width:100%; table-layout:fixed;"'
+) |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = TRUE,
+    position = "left",
+    font_size = 11
+  ) |>
+  kableExtra::scroll_box(width = "100%", height = "350px")
+```
+
+## Dataset Dimensions and Structure
+
+The dimensions and variable types are examined to confirm that the combined dataset has the expected number of observations and variables.
+
+```{r dataset-structure}
+# Dataset dimensions
+dataset_dimensions <- data.frame(
+  Dataset = c("Red Wine", "White Wine", "Combined Dataset"),
+  Observations = c(
+    nrow(red_wine),
+    nrow(white_wine),
+    nrow(wine_data)
+  ),
+  Variables = c(
+    ncol(red_wine),
+    ncol(white_wine),
+    ncol(wine_data)
+  )
+)
+
+knitr::kable(
+  dataset_dimensions,
+  caption = "Dimensions of the Wine Quality Datasets",
+  booktabs = TRUE
+)
+
+# Verify expected dimensions
+stopifnot(
+  nrow(red_wine) == 1599,
+  nrow(white_wine) == 4898,
+  nrow(wine_data) == 6497,
+  ncol(wine_data) == 13
+)
+
+# Display variable names and data types
+variable_structure <- data.frame(
+  Variable = names(wine_data),
+  Data_Type = vapply(
+    wine_data,
+    function(x) class(x)[1],
+    character(1)
+  )
+)
+
+knitr::kable(
+  variable_structure,
+  caption = "Variables and Data Types",
+  booktabs = TRUE
+)
+```
+
+## Description of Variables
+
+The combined dataset contains 11 physicochemical measurements, a sensory quality score, and a wine-color indicator. Table 4 summarizes the variables, their descriptions, and their roles in the subsequent analyses.
+
+```{r variable-description}
+# Define variable descriptions and analytical roles
+variable_description <- data.frame(
+  Variable = c(
+    "fixed_acidity",
+    "volatile_acidity",
+    "citric_acid",
+    "residual_sugar",
+    "chlorides",
+    "free_sulfur_dioxide",
+    "total_sulfur_dioxide",
+    "density",
+    "p_h",
+    "sulphates",
+    "alcohol",
+    "quality",
+    "color"
+  ),
+
+  Description = c(
+    "Nonvolatile acids in the wine",
+    "Volatile acids, primarily acetic acid",
+    "Citric acid content",
+    "Sugar remaining after fermentation",
+    "Chloride concentration",
+    "Free sulfur dioxide concentration",
+    "Total sulfur dioxide concentration",
+    "Density of the wine",
+    "Acidity level expressed as pH",
+    "Sulphate concentration",
+    "Alcohol content",
+    "Sensory quality score",
+    "Red or white wine indicator"
+  ),
+
+  Role = c(
+    rep("Physicochemical", 11),
+    "Descriptive analysis",
+    "MANOVA grouping variable"
+  )
+)
+
+# Display the variable-description table
+knitr::kable(
+  variable_description,
+  caption = "Description and Analytical Roles of Dataset Variables",
+  col.names = c("Variable", "Description", "Role in the Analysis"),
+  align = c("l", "l", "l"),
+  booktabs = TRUE
+)
+```
+
+The 11 physicochemical variables will serve as the input variables for PCA and EFA. For MANOVA, `color` will identify the two wine groups, while the physicochemical variables will serve as the response variables. The `quality` score will be retained for descriptive analysis but excluded from the PCA and EFA input matrix.
+
+## Missing Values and Duplicate Observations
+
+Missing values and duplicate rows are examined to assess data completeness and identify potential data-quality issues. Exact duplicate rows are counted after combining the datasets and adding the wine-color indicator.
+
+```{r data-quality}
+# Count missing values in each variable
+missing_summary <- data.frame(
+  Variable = names(wine_data),
+  Missing_Count = colSums(is.na(wine_data))
+) |>
+  mutate(
+    Missing_Percent = round(
+      Missing_Count / nrow(wine_data) * 100,
+      3
+    )
+  )
+
+knitr::kable(
+  missing_summary,
+  caption = "Missing Values by Variable",
+  digits = 3,
+  booktabs = TRUE
+)
+
+# Count exact duplicate rows
+duplicate_count <- sum(duplicated(wine_data))
+
+duplicate_summary <- data.frame(
+  Measure = c(
+    "Total observations",
+    "Exact duplicate rows",
+    "Unique rows"
+  ),
+  Count = c(
+    nrow(wine_data),
+    duplicate_count,
+    nrow(wine_data) - duplicate_count
+  )
+)
+
+knitr::kable(
+  duplicate_summary,
+  caption = "Duplicate Observation Check",
+  booktabs = TRUE
+)
+```
+
+## Descriptive Statistics
+
+Descriptive statistics are calculated to summarize the distribution of the numeric variables. The mean and standard deviation describe the central tendency and variability, while the minimum, median, and maximum provide information about the observed ranges.
+
+```{r descriptive-statistics}
+# Select numeric variables, excluding the color indicator
+numeric_wine <- wine_data |>
+  dplyr::select(where(is.numeric))
+
+# Calculate descriptive statistics
+descriptive_summary <- data.frame(
+  Variable = names(numeric_wine),
+  Mean = vapply(numeric_wine, mean, numeric(1), na.rm = TRUE),
+  SD = vapply(numeric_wine, sd, numeric(1), na.rm = TRUE),
+  Minimum = vapply(numeric_wine, min, numeric(1), na.rm = TRUE),
+  Median = vapply(numeric_wine, median, numeric(1), na.rm = TRUE),
+  Maximum = vapply(numeric_wine, max, numeric(1), na.rm = TRUE)
+) |>
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3))
+  )
+
+knitr::kable(
+  descriptive_summary,
+  caption = "Descriptive Statistics for Numeric Wine Variables",
+  booktabs = TRUE,
+  align = "lrrrrr"
+)
+```
+
+The combined dataset contained 6,497 wine observations, comprising 1,599 red wines and 4,898 white wines, with 11 physicochemical measurements, a quality score, and a wine-color indicator. The variable-structure check confirmed [state whether the expected dimensions were verified]. The missing-value analysis identified [summarize the actual missing-value findings], while the duplicate-row check found [report the actual duplicate count]. The descriptive statistics showed differences in the ranges and variability of the physicochemical measurements, indicating that the variables should be examined carefully before multivariate analysis. In particular, differences in measurement scales will be considered when preparing the physicochemical variables for PCA and EFA.
+
+# Research Questions and Hypotheses
+
+This study addresses three research questions using MANOVA, Principal Component Analysis (PCA), and Exploratory Factor Analysis (EFA) to investigate the physicochemical characteristics of red and white Portuguese Vinho Verde wines.
+
+## Research Question 1: Differences Between Red and White Wines (MANOVA)
+
+**Research Question:** Do red and white wines differ significantly in their combined physicochemical characteristics?
+
+The grouping variable is `color`, while at least four physicochemical variables will be selected as dependent variables based on the exploratory data analysis.
+
+**Null Hypothesis (**$H_0$): The population mean vectors of red and white wines are equal.
+
+$$H_0:\boldsymbol{\mu}_{Red}=\boldsymbol{\mu}_{White}$$
+
+**Alternative Hypothesis (**$H_1$): The population mean vectors differ.
+
+$$H_1:\boldsymbol{\mu}_{Red}\neq\boldsymbol{\mu}_{White}$$
+
+## Research Question 2: Dimensionality Reduction (PCA)
+
+**Research Question:** Can the 11 physicochemical variables be summarized using fewer principal components while retaining a substantial proportion of the total variability?
+
+PCA will use standardized physicochemical variables, excluding `color` and `quality`. The number of components will be evaluated using eigenvalues, a scree plot, explained variance, parallel analysis, and component loadings rather than relying on a single criterion.
+
+## Research Question 3: Underlying Physicochemical Factors (EFA)
+
+**Research Question:** What underlying factors may explain the relationships among the 11 physicochemical variables?
+
+EFA will investigate the latent structure of the measurements. Data suitability will be assessed using the Kaiser–Meyer–Olkin (KMO) measure and Bartlett's test of sphericity.
+
+For Bartlett's test, the hypotheses are:
+
+**Null Hypothesis (**$H_0$): The population correlation matrix is an identity matrix.
+
+$$H_0:\mathbf{R}=\mathbf{I}$$
+
+**Alternative Hypothesis (**$H_1$): The population correlation matrix is not an identity matrix.
+
+$$H_1:\mathbf{R}\neq\mathbf{I}$$
+
+The number of factors, extraction method, and rotation method will be justified using statistical evidence and interpretability.
+
+# Methodology
+
+## Analytical Workflow
+
+The analysis follows a structured workflow using the combined UCI Wine Quality Dataset. First, the red and white wine datasets are imported, combined, and checked for data-quality issues. Exploratory Data Analysis (EDA) is then conducted to understand the distributions, variability, correlations, and potential outliers among the measurements. The subsequent analyses are performed in the order specified in the assessment: MANOVA, PCA, and EFA. Finally, the findings are integrated to develop an overall interpretation of the physicochemical characteristics of the wines.
+
+## Data Preparation and Exploratory Analysis
+
+The red and white wine CSV files are imported into RStudio and combined into one dataset. A categorical variable named `color` distinguishes the two wine types. The dataset is examined for its dimensions, variable types, missing values, and duplicate observations. Descriptive statistics, including the mean, standard deviation, median, and observed range, are calculated for the quantitative variables. Histograms, boxplots, scatterplot matrices, and correlation plots are used to examine distributions, relationships, and potential outliers. These findings guide the selection of dependent variables for MANOVA and inform the preparation of variables for PCA and EFA.
+
+## Multivariate Analysis of Variance (MANOVA)
+
+MANOVA is used to determine whether red and white wines differ in their combined physicochemical characteristics. Wine color is the independent grouping variable, and at least four physicochemical measurements will be selected as dependent variables based on the exploratory analysis. Before fitting the model, the assumptions of independence, multivariate normality, absence of influential multivariate outliers, and homogeneity of covariance matrices are examined. Correlations among the selected dependent variables are also inspected. Pillai's Trace will be used as the primary multivariate test statistic. If the overall test is significant, follow-up univariate analyses and effect sizes will be examined to identify which measurements contribute to the group differences.
+
+## Principal Component Analysis (PCA)
+
+PCA is applied to the 11 physicochemical variables to determine whether their information can be summarized using fewer components. The variables are standardized because their measurement scales and variabilities differ. Standardization is expressed as
+
+$$z_{ij}=\frac{x_{ij}-\bar{x}_j}{s_j},$$
+
+where $x_{ij}$ is the observed value for observation $i$ and variable $j$, $\bar{x}_j$ is the variable mean, and $s_j$ is its standard deviation. The `color` and `quality` variables are excluded from the PCA input. Component retention is assessed using eigenvalues, a scree plot, explained and cumulative variance, parallel analysis, and interpretability. Component loadings and a biplot are examined to identify the variables that contribute most strongly to each retained component.
+
+## Exploratory Factor Analysis (EFA)
+
+EFA is conducted using the same 11 physicochemical variables to investigate whether their correlations can be explained by a smaller number of underlying factors. Suitability for factor analysis is assessed using the correlation matrix, the Kaiser–Meyer–Olkin (KMO) measure, and Bartlett's test of sphericity. The number of factors is determined using parallel analysis, the scree plot, eigenvalues, and interpretability rather than a single retention criterion. Minimum residual extraction and oblique rotation will be considered because underlying factors may be correlated. Factor loadings, communalities, and uniqueness values are examined to evaluate how the variables relate to the retained factors and to support their interpretation.
+
+## Integrated Interpretation
+
+The findings from MANOVA, PCA, and EFA are compared to develop an overall understanding of the wine data. MANOVA results describe differences between red and white wines, PCA identifies the main dimensions of variation, and EFA investigates the underlying factor structure. Similarities and differences between the PCA components and EFA factors are discussed alongside the observed chemical characteristics. The study concludes by summarizing the major findings and acknowledging limitations, including the observational nature of the data, the imbalance between red and white wine sample sizes, and potential limitations arising from outliers and variable relationships.
+
+# Results / Findings
+
+## Exploratory Data Analysis (EDA)
+
+Exploratory Data Analysis (EDA) was conducted to examine the distribution, variability, and relationships of the physicochemical characteristics in the combined red and white wine dataset. Descriptive statistics and visualizations were used to compare the two wine types, identify potential outliers, and investigate correlations among the measurements. The findings provide an initial understanding of the data and guide the subsequent MANOVA, PCA, and EFA procedures.
+
+### Descriptive Statistics
+
+```{r eda-descriptive-statistics}
+# Select the 11 physicochemical variables
+physchem_vars <- c(
+  "fixed_acidity",
+  "volatile_acidity",
+  "citric_acid",
+  "residual_sugar",
+  "chlorides",
+  "free_sulfur_dioxide",
+  "total_sulfur_dioxide",
+  "density",
+  "p_h",
+  "sulphates",
+  "alcohol"
+)
+
+# Summarize each variable separately for red and white wines
+eda_summary <- wine_data |>
+  dplyr::select(color, dplyr::all_of(physchem_vars)) |>
+  tidyr::pivot_longer(
+    cols = dplyr::all_of(physchem_vars),
+    names_to = "Variable",
+    values_to = "Value"
+  ) |>
+  dplyr::group_by(color, Variable) |>
+  dplyr::summarise(
+    N = sum(!is.na(Value)),
+    Mean = mean(Value, na.rm = TRUE),
+    SD = sd(Value, na.rm = TRUE),
+    Median = median(Value, na.rm = TRUE),
+    IQR = IQR(Value, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  dplyr::mutate(
+    dplyr::across(
+      c(Mean, SD, Median, IQR),
+      ~ round(.x, 3)
+    )
+  )
+
+knitr::kable(
+  eda_summary,
+  caption = "Descriptive Statistics of Physicochemical Variables by Wine Color",
+  col.names = c(
+    "Wine Color", "Variable", "N",
+    "Mean", "Standard Deviation", "Median", "IQR"
+  ),
+  align = "llrrrrr",
+  booktabs = TRUE
+)
+```
+
+The descriptive statistics show noticeable differences between red and white wines in several physicochemical measurements. White wines have higher mean residual sugar (6.391 compared with 2.539), free sulfur dioxide (35.308 compared with 15.875), and total sulfur dioxide (138.361 compared with 46.468). In contrast, red wines have higher mean fixed acidity (8.320 compared with 6.855), volatile acidity (0.528 compared with 0.278), chlorides (0.087 compared with 0.046), and sulphates (0.658 compared with 0.490). The mean alcohol contents are relatively similar, at 10.423 for red wines and 10.514 for white wines. These differences suggest that wine color is associated with distinct patterns in the physicochemical measurements, which will be investigated further using multivariate analysis.
+
+### Distribution of Physicochemical Variables
+
+```{r eda-distributions, fig.width=10, fig.height=10}
+# Convert the physicochemical variables to long format
+wine_long <- wine_data |>
+  dplyr::select(color, dplyr::all_of(physchem_vars)) |>
+  tidyr::pivot_longer(
+    cols = dplyr::all_of(physchem_vars),
+    names_to = "Variable",
+    values_to = "Value"
+  )
+
+# Plot distributions by wine color
+ggplot2::ggplot(
+  wine_long,
+  ggplot2::aes(
+    x = Value,
+    fill = color
+  )
+) +
+  ggplot2::geom_histogram(
+    ggplot2::aes(y = after_stat(density)),
+    bins = 30,
+    position = "identity",
+    alpha = 0.45,
+    color = "white"
+  ) +
+  ggplot2::facet_wrap(
+    ~ Variable,
+    scales = "free",
+    ncol = 3
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c("Red" = "#B94A48", "White" = "#D6AD45")
+  ) +
+  ggplot2::labs(
+    title = "Distributions of Physicochemical Variables by Wine Color",
+    x = "Observed Value",
+    y = "Density",
+    fill = "Wine Color"
+  ) +
+  ggplot2::theme_minimal(base_size = 10) +
+  ggplot2::theme(
+    legend.position = "bottom",
+    plot.title = ggplot2::element_text(face = "bold"),
+    strip.text = ggplot2::element_text(face = "bold")
+  )
+```
+
+The histograms show that several physicochemical variables have right-skewed distributions, particularly residual sugar, free sulfur dioxide, total sulfur dioxide, chlorides, and sulphates. White wines show a wider distribution of residual sugar and sulfur dioxide measurements, while red wines generally have higher values for fixed acidity and volatile acidity. Alcohol and pH are more concentrated around their central ranges, whereas density varies within a relatively narrow interval. These distribution patterns indicate that the variables differ in their shapes and variability, so potential skewness and extreme observations should be considered before conducting the subsequent statistical analyses.
+
+### Comparison of Red and White Wines
+
+```{r eda-boxplots, fig.width=10, fig.height=10}
+ggplot2::ggplot(
+  wine_long,
+  ggplot2::aes(
+    x = color,
+    y = Value,
+    fill = color
+  )
+) +
+  ggplot2::geom_boxplot(
+    alpha = 0.8,
+    outlier.alpha = 0.3,
+    outlier.size = 0.7
+  ) +
+  ggplot2::facet_wrap(
+    ~ Variable,
+    scales = "free_y",
+    ncol = 3
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c("Red" = "#B94A48", "White" = "#D6AD45")
+  ) +
+  ggplot2::labs(
+    title = "Physicochemical Measurements by Wine Color",
+    x = "Wine Color",
+    y = "Observed Value"
+  ) +
+  ggplot2::theme_minimal(base_size = 10) +
+  ggplot2::theme(
+    legend.position = "none",
+    plot.title = ggplot2::element_text(face = "bold"),
+    strip.text = ggplot2::element_text(face = "bold")
+  )
+```
+
+The boxplots highlight differences between the two wine groups. White wines generally have higher medians for residual sugar, free sulfur dioxide, total sulfur dioxide, and citric acid, whereas red wines have higher medians for fixed acidity, volatile acidity, chlorides, sulphates, and pH. The median alcohol contents are relatively close, although white wines have a slightly higher median. Several variables also contain observations beyond the boxplot whiskers, suggesting potential outliers. These visual differences provide a basis for selecting appropriate variables for MANOVA, but statistical testing is necessary to determine whether the group differences are significant when multiple characteristics are considered together.
+
+### Correlation Matrix
+
+```{r eda-correlation, fig.width=10, fig.height=9}
+# Calculate correlations among the 11 physicochemical variables
+cor_matrix <- stats::cor(
+  wine_data[, physchem_vars],
+  use = "pairwise.complete.obs",
+  method = "pearson"
+)
+
+# Display the correlation matrix as a heatmap
+corrplot::corrplot(
+  cor_matrix,
+  method = "color",
+  type = "upper",
+  order = "hclust",
+  diag = FALSE,
+  addCoef.col = "black",
+  number.cex = 0.55,
+  tl.col = "black",
+  tl.cex = 0.8,
+  tl.srt = 45,
+  col = grDevices::colorRampPalette(
+    c("#B94A48", "white", "#3976A8")
+  )(200),
+  title = "Correlations Among Physicochemical Variables",
+  mar = c(0, 0, 2, 0)
+)
+```
+
+The correlation matrix reveals several notable relationships among the physicochemical variables. The strongest positive correlation is between free and total sulfur dioxide ((r=0.72)), indicating that wines with higher free sulfur dioxide tend to have higher total sulfur dioxide. Residual sugar is moderately positively correlated with density ((r=0.55)), while density has a strong negative correlation with alcohol ((r=-0.69)). Other negative relationships include total sulfur dioxide with volatile acidity ((r=-0.41)) and volatile acidity with citric acid ((r=-0.38)). These correlations indicate that some measurements share information, supporting further investigation through PCA and EFA; however, correlation alone does not establish causation.
+
+### Pairwise Relationships Among Selected Variables
+
+```{r eda-scatterplot-matrix, fig.width=11, fig.height=10}
+# Choose representative variables for closer inspection
+pair_vars <- c(
+  "fixed_acidity",
+  "volatile_acidity",
+  "residual_sugar",
+  "density",
+  "alcohol"
+)
+
+pair_data <- wine_data[
+  ,
+  c(pair_vars, "color"),
+  drop = FALSE
+]
+
+GGally::ggpairs(
+  pair_data,
+  columns = seq_along(pair_vars),
+  mapping = ggplot2::aes(color = color),
+  upper = list(
+    continuous = GGally::wrap("cor", size = 3)
+  ),
+  lower = list(
+    continuous = GGally::wrap(
+      "points",
+      alpha = 0.2,
+      size = 0.4
+    )
+  ),
+  diag = list(
+    continuous = GGally::wrap("densityDiag")
+  )
+) +
+  ggplot2::scale_color_manual(
+    values = c("Red" = "#B94A48", "White" = "#D6AD45")
+  )
+```
+
+The scatterplot matrix provides a closer view of the relationships among fixed acidity, volatile acidity, residual sugar, density, and alcohol. The overall correlation between residual sugar and density is positive ((r=0.553)), while density and alcohol have a strong negative relationship ((r=-0.687)). The strength of these relationships also differs between wine groups: the residual sugar–density correlation is stronger among white wines ((r=0.839)) than red wines ((r=0.355)), while the negative density–alcohol relationship is stronger among white wines ((r=-0.780)) than red wines ((r=-0.496)). These patterns suggest that relationships observed in the combined dataset can differ from those within individual groups, which is important when interpreting the multivariate structure of the wines.
+
+### Univariate Outlier Screening
+
+```{r eda-univariate-outliers}
+# Count potential outliers for each physicochemical variable
+univariate_outliers <- lapply(
+  physchem_vars,
+  function(variable) {
+    x <- wine_data[[variable]]
+
+    q1 <- stats::quantile(x, 0.25, na.rm = TRUE)
+    q3 <- stats::quantile(x, 0.75, na.rm = TRUE)
+    variable_iqr <- stats::IQR(x, na.rm = TRUE)
+
+    lower_bound <- q1 - 1.5 * variable_iqr
+    upper_bound <- q3 + 1.5 * variable_iqr
+
+    data.frame(
+      Variable = variable,
+      Lower_Bound = as.numeric(lower_bound),
+      Upper_Bound = as.numeric(upper_bound),
+      Potential_Outliers = sum(
+        x < lower_bound | x > upper_bound,
+        na.rm = TRUE
+      )
+    )
+  }
+) |>
+  dplyr::bind_rows() |>
+  dplyr::mutate(
+    dplyr::across(
+      c(Lower_Bound, Upper_Bound),
+      ~ round(.x, 3)
+    )
+  )
+
+knitr::kable(
+  univariate_outliers,
+  caption = "Potential Univariate Outliers Using the 1.5 × IQR Rule",
+  col.names = c(
+    "Variable", "Lower Bound",
+    "Upper Bound", "Number of Potential Outliers"
+  ),
+  digits = 3,
+  booktabs = TRUE
+)
+```
+
+The (1.5\times IQR) screening rule identifies the largest numbers of potential outliers in citric acid (509 observations), volatile acidity (377), fixed acidity (357), and chlorides (286). Sulphates also has 191 flagged observations, while total sulfur dioxide, density, and alcohol have relatively few under this rule, with 10, 3, and 3 observations, respectively. The relatively high counts in some variables may reflect skewed distributions and differences between red and white wines rather than data-entry errors. Therefore, these observations should be reviewed alongside the plots and variable distributions instead of being automatically removed.
+
+### Multivariate Outlier Screening
+
+```{r eda-multivariate-outliers}
+# Prepare complete observations for the 11 physicochemical variables
+physchem_complete <- wine_data[
+  ,
+  physchem_vars,
+  drop = FALSE
+]
+
+complete_rows <- stats::complete.cases(physchem_complete)
+physchem_complete <- physchem_complete[complete_rows, ]
+
+# Calculate squared Mahalanobis distances
+mah_distance <- stats::mahalanobis(
+  physchem_complete,
+  center = colMeans(physchem_complete),
+  cov = stats::cov(physchem_complete)
+)
+
+# Define the screening cutoff
+mah_cutoff <- stats::qchisq(
+  0.999,
+  df = length(physchem_vars)
+)
+
+# Summarize potential multivariate outliers
+multivariate_summary <- data.frame(
+  Complete_Observations = nrow(physchem_complete),
+  Screening_Cutoff = mah_cutoff,
+  Potential_Outliers = sum(mah_distance > mah_cutoff)
+)
+
+knitr::kable(
+  multivariate_summary,
+  caption = "Summary of Multivariate Outlier Screening",
+  digits = 3,
+  booktabs = TRUE
+)
+
+# Display the ten largest squared distances
+row_indices <- which(complete_rows)
+
+top_multivariate_outliers <- data.frame(
+  Observation = row_indices,
+  Squared_Mahalanobis_Distance = mah_distance,
+  Potential_Outlier = mah_distance > mah_cutoff
+) |>
+  dplyr::arrange(
+    dplyr::desc(Squared_Mahalanobis_Distance)
+  ) |>
+  head(10) |>
+  dplyr::mutate(
+    Squared_Mahalanobis_Distance =
+      round(Squared_Mahalanobis_Distance, 3)
+  )
+
+knitr::kable(
+  top_multivariate_outliers,
+  caption = "Ten Observations with the Largest Squared Mahalanobis Distances",
+  booktabs = TRUE
+)
+```
+
+Using squared Mahalanobis distances and a chi-square screening cutoff of 31.264, 175 of the 6,497 observations were flagged as potential multivariate outliers, representing approximately 2.7% of the dataset. The ten observations with the largest distances include observation 4381, with a squared Mahalanobis distance of 980.895, and observation 152, with a distance of 366.620. These results indicate that some wines have unusual combinations of physicochemical measurements, even if their individual values are not always extreme. However, because red and white wines have different distributions, this screening on the combined dataset is preliminary; the flagged observations should be examined further, including within each wine group, before drawing conclusions about their influence on MANOVA.
+
+## MANOVA (Multivariate Analysis of Variance)
+
+### Selection and Justification of Response Variables
+
+Based on the exploratory data analysis, five physicochemical variables were selected as the responses for MANOVA: total sulfur dioxide, fixed acidity, volatile acidity, residual sugar, and pH. The selection considers the observed differences between red and white wines, the descriptive statistics, and the chemical characteristics represented by each variable.
+
+| Variable | Red Mean | White Mean | EDA-Based Justification |
+|-----------------|------------------:|------------------:|-----------------|
+| Total sulfur dioxide | 46.468 | 138.361 | Shows a large difference in group means and medians, indicating a strong potential group distinction. |
+| Fixed acidity | 8.320 | 6.855 | Red wines have higher mean and median values, indicating a difference in fixed acidity. |
+| Volatile acidity | 0.528 | 0.278 | The red-wine mean is almost twice the white-wine mean, showing a clear group difference. |
+| Residual sugar | 2.539 | 6.391 | White wines have higher mean and median values and substantially greater variability. |
+| pH | 3.311 | 3.188 | Provides a complementary acidity measurement and shows a difference between the group means. |
+
+Total sulfur dioxide was selected instead of free sulfur dioxide because the EDA correlation matrix showed a strong positive correlation between the two variables ($r = 0.72$). Including both could introduce redundant information into the response set. Fixed acidity and volatile acidity were retained because they represent different aspects of acidity and show noticeable differences between the wine groups.
+
+Residual sugar was included because its mean and median differ substantially between red and white wines. Its high variability and right-skewed distribution, however, require careful attention during the assumption checks. Finally, pH was retained as a complementary acidity measurement. Although the difference in pH is smaller than those observed for sulfur dioxide, residual sugar, and volatile acidity, it adds a different measurement of acidity to the response set.
+
+Alcohol was not selected because the group means are relatively close (10.423 for red wines and 10.514 for white wines). Density was not selected because it is strongly negatively correlated with alcohol ($r = -0.69$) and positively correlated with residual sugar ($r = 0.55$). Citric acid and free sulfur dioxide were considered, but the selected variables provide a reasonable balance of visible group differences and distinct chemical characteristics.
+
+These choices are justified by the exploratory results, but they do not establish that the variables are statistically optimal. MANOVA will formally evaluate whether the mean vector of the selected characteristics differs between red and white wines.
+
+The following code produces an additional table to verify the descriptive evidence for the selected response variables.
+
+```{r manova-variable-selection}
+# Select the five response variables
+manova_variables <- c(
+  "total_sulfur_dioxide",
+  "fixed_acidity",
+  "volatile_acidity",
+  "residual_sugar",
+  "p_h"
+)
+
+# Calculate descriptive statistics and standardized differences
+manova_selection_evidence <- purrr::map_dfr(
+  manova_variables,
+  function(variable) {
+
+    red <- wine_data[[variable]][wine_data$color == "Red"]
+    white <- wine_data[[variable]][wine_data$color == "White"]
+
+    red <- red[!is.na(red)]
+    white <- white[!is.na(white)]
+
+    n_red <- length(red)
+    n_white <- length(white)
+
+    pooled_sd <- sqrt(
+      ((n_red - 1) * stats::var(red) +
+       (n_white - 1) * stats::var(white)) /
+      (n_red + n_white - 2)
+    )
+
+    data.frame(
+      Variable = variable,
+      Mean_Red = mean(red),
+      Mean_White = mean(white),
+      Median_Red = median(red),
+      Median_White = median(white),
+      SD_Red = stats::sd(red),
+      SD_White = stats::sd(white),
+      IQR_Red = stats::IQR(red),
+      IQR_White = stats::IQR(white),
+      Mean_Difference = mean(red) - mean(white),
+      Cohen_d = (mean(red) - mean(white)) / pooled_sd
+    )
+  }
+) |>
+  dplyr::mutate(
+    dplyr::across(
+      where(is.numeric),
+      ~ round(.x, 3)
+    )
+  )
+
+knitr::kable(
+  manova_selection_evidence,
+  caption = "EDA Evidence Supporting MANOVA Variable Selection",
+  digits = 3,
+  format = "html",
+  booktabs = TRUE,
+  align = "lrrrrrrrrrr",
+  table.attr = 'style="min-width:1100px; width:1100px; white-space:normal;"'
+) |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    position = "left",
+    font_size = 11
+  ) |>
+  kableExtra::scroll_box(
+    width = "100%",
+    height = "450px"
+  )
+```
+
+### Research Question and Preparing Dataset
+
+The MANOVA examines whether red and white wines differ in their combined physicochemical characteristics, represented by total sulfur dioxide, fixed acidity, volatile acidity, residual sugar, and pH.
+
+The null hypothesis states that the population mean vectors of the five response variables are equal between red and white wines:
+
+$$H_0:\boldsymbol{\mu}_{Red}=\boldsymbol{\mu}_{White}$$
+
+The alternative hypothesis states that the population mean vectors differ:
+
+$$H_1:\boldsymbol{\mu}_{Red}\neq\boldsymbol{\mu}_{White}$$
+
+The significance level is set to $\alpha=0.05$. Before interpreting the MANOVA, independence, multivariate normality, potential multivariate outliers, covariance homogeneity, and relationships among the response variables will be examined.
+
+```{r manova-prepare}
+# Preserve the original row number for outlier inspection
+manova_data <- wine_data |>
+  dplyr::mutate(
+    original_row = dplyr::row_number()
+  ) |>
+  dplyr::select(
+    original_row,
+    color,
+    dplyr::all_of(manova_variables)
+  ) |>
+  tidyr::drop_na() |>
+  dplyr::mutate(
+    color = droplevels(color)
+  )
+
+# Report the usable sample sizes
+group_counts <- as.data.frame(
+  table(manova_data$color)
+)
+
+names(group_counts) <- c(
+  "Wine_Color",
+  "Observations"
+)
+
+knitr::kable(
+  group_counts,
+  caption = "Usable Observations for MANOVA",
+  booktabs = TRUE
+)
+
+cat(
+  "Total observations used:",
+  nrow(manova_data),
+  "\n"
+)
+
+cat(
+  "Observations excluded for missing selected variables:",
+  nrow(wine_data) - nrow(manova_data),
+  "\n"
+)
+```
+
+### Correlation Plot
+
+Correlations among the response variables are examined to identify meaningful relationships and possible redundancy. Extremely high correlations could indicate that some measurements provide largely overlapping information.
+
+```{r manova-correlations, fig.width=8, fig.height=7}
+# Calculate the correlation matrix
+manova_correlations <- stats::cor(
+  manova_data[, manova_variables, drop = FALSE],
+  use = "complete.obs"
+)
+
+# Display the correlation coefficients
+round(manova_correlations, 3)
+
+# Create a correlation plot
+corrplot::corrplot(
+  manova_correlations,
+  method = "color",
+  type = "upper",
+  addCoef.col = "black",
+  number.cex = 0.75,
+  tl.col = "black",
+  tl.srt = 45,
+  title = "Correlations Among Selected MANOVA Variables",
+  mar = c(0, 0, 2, 0)
+)
+```
+
+**Correlation structure.** The selected variables show moderate relationships, with the strongest positive correlation between total sulfur dioxide and residual sugar ($r = 0.50$) and the strongest negative correlation between total sulfur dioxide and volatile acidity ($r = -0.41$). No pair has a near-perfect correlation, suggesting that the selected variables provide related but not completely redundant information for MANOVA.
+
+### Multivariate Outliers
+
+```{r manova-outliers}
+# Set the screening cutoff for five response variables
+outlier_cutoff <- stats::qchisq(
+  0.99,
+  df = length(manova_variables)
+)
+
+# Calculate distances within each wine group
+manova_outliers <- manova_data |>
+  dplyr::group_by(color) |>
+  dplyr::group_modify(function(.x, .y) {
+
+    X <- as.matrix(
+      .x[, manova_variables, drop = FALSE]
+    )
+
+    distances <- stats::mahalanobis(
+      X,
+      center = colMeans(X),
+      cov = stats::cov(X)
+    )
+
+    tibble::tibble(
+      original_row = .x$original_row,
+      squared_distance = as.numeric(distances),
+      potential_outlier = distances > outlier_cutoff
+    )
+  }) |>
+  dplyr::ungroup()
+
+# Summarize the flagged observations by group
+outlier_summary <- manova_outliers |>
+  dplyr::group_by(color) |>
+  dplyr::summarise(
+    Observations = dplyr::n(),
+    Potential_Outliers = sum(potential_outlier),
+    Percentage = 100 * mean(potential_outlier),
+    .groups = "drop"
+  ) |>
+  dplyr::mutate(
+    Cutoff = outlier_cutoff,
+    Percentage = round(Percentage, 2)
+  )
+
+knitr::kable(
+  outlier_summary,
+  caption = "Multivariate Outlier Screening by Wine Color",
+  digits = 3,
+  booktabs = TRUE
+)
+
+# Display the ten observations with the largest distances
+manova_outliers |>
+  dplyr::arrange(
+    dplyr::desc(squared_distance)
+  ) |>
+  dplyr::slice_head(n = 10) |>
+  knitr::kable(
+    caption = "Ten Largest Squared Mahalanobis Distances",
+    digits = 3,
+    booktabs = TRUE
+  )
+```
+
+**Multivariate outlier screening.** Using the 99th-percentile chi-square cutoff of 15.086, 62 red wines (3.88%) and 123 white wines (2.51%) were flagged as potential multivariate outliers. These observations will be retained for now because the screening identifies unusual combinations of measurements, not necessarily erroneous data.
+
+### Assess Multivariate Normality
+
+Mardia's test is used to examine multivariate skewness and kurtosis within each group. The results will be interpreted together with the distribution plots and outlier screening.
+
+```{r manova-normality}
+# Prepare the response variables for each group
+red_responses <- manova_data |>
+  dplyr::filter(color == "Red") |>
+  dplyr::select(
+    dplyr::all_of(manova_variables)
+  )
+
+white_responses <- manova_data |>
+  dplyr::filter(color == "White") |>
+  dplyr::select(
+    dplyr::all_of(manova_variables)
+  )
+
+# Mardia's test for red wines
+cat("Mardia test for red wines:\n")
+
+print(
+  tryCatch(
+    psych::mardia(red_responses),
+    error = function(e) {
+      paste(
+        "Diagnostic could not run:",
+        conditionMessage(e)
+      )
+    }
+  )
+)
+
+# Mardia's test for white wines
+cat("\nMardia test for white wines:\n")
+
+print(
+  tryCatch(
+    psych::mardia(white_responses),
+    error = function(e) {
+      paste(
+        "Diagnostic could not run:",
+        conditionMessage(e)
+      )
+    }
+  )
+)
+```
+
+**Multivariate normality.** Mardia's skewness and kurtosis tests indicate strong departures from multivariate normality in both red and white wines, consistent with the pronounced tail deviations visible in the Q-Q plots. This assumption violation will be considered when interpreting the MANOVA results.
+
+### Assess Homogeneity of Covariance Matrices
+
+Box's M test examines whether the covariance matrices of the selected responses are equal across red and white wines.
+
+```{r manova-box-m}
+# Perform Box's M test
+box_m_result <- tryCatch(
+  biotools::boxM(
+    data = as.matrix(
+      manova_data[, manova_variables, drop = FALSE]
+    ),
+    grouping = manova_data$color
+  ),
+  error = function(e) {
+    paste(
+      "Box's M test could not run:",
+      conditionMessage(e)
+    )
+  }
+)
+
+print(box_m_result)
+```
+
+**Homogeneity of covariance matrices.** Box's M test was significant, $\chi^2(15) = 5215.3$, $p < .001$, providing evidence that the covariance matrices differ between red and white wines. Therefore, the assumption of equal covariance matrices is not supported, and a robust choice of multivariate test statistic is particularly important.
+
+### Conduct MANOVA Using Pillai's Trace
+
+Pillai's Trace was selected as the primary MANOVA statistic because it is generally considered more robust than some alternatives when assumptions are not fully satisfied, handles unequal group sizes, and works well with small sample sizes. This choice is appropriate given the observed non-normality and unequal covariance matrices, although it does not eliminate the need to acknowledge these limitations.
+
+```{r manova-results}
+# Construct the MANOVA formula
+manova_formula <- stats::as.formula(
+  paste0(
+    "cbind(",
+    paste(manova_variables, collapse = ", "),
+    ") ~ color"
+  )
+)
+
+# Fit the MANOVA model
+manova_fit <- stats::manova(
+  manova_formula,
+  data = manova_data
+)
+
+# Run the multivariate test using Pillai's Trace
+pillai_result <- summary(
+  manova_fit,
+  test = "Pillai"
+)
+
+# Display the original model output
+print(pillai_result)
+
+# Format the multivariate statistics as a table
+pillai_table <- as.data.frame(
+  pillai_result$stats
+)
+
+pillai_table$Effect <- rownames(pillai_table)
+rownames(pillai_table) <- NULL
+
+pillai_table <- pillai_table |>
+  dplyr::select(
+    Effect,
+    dplyr::everything()
+  )
+
+knitr::kable(
+  pillai_table,
+  caption = "MANOVA Results Using Pillai's Trace",
+  digits = 4,
+  booktabs = TRUE
+)
+```
+
+**Overall MANOVA result.** Pillai's Trace was $V = 0.7451$, with $F(5, 6491) = 3793.93$ and $p < .001$. The null hypothesis is rejected at the .05 significance level, indicating strong evidence that red and white wines differ in their combined mean vector across the five selected physicochemical measurements.
+
+### Follow-Up ANOVA and Effect Sizes
+
+If the overall MANOVA is significant, individual one-way ANOVAs are conducted to determine which response variables contribute to the group differences. The Holm adjustment is applied to the five p-values to account for multiple testing.
+
+```{r manova-follow-up}
+# Extract the p-value from the overall MANOVA
+pillai_p <- as.numeric(
+  pillai_result$stats[1, "Pr(>F)"]
+)
+
+if (is.finite(pillai_p) && pillai_p < 0.05) {
+
+  # Run a separate ANOVA for each response variable
+  anova_results <- purrr::map_dfr(
+    manova_variables,
+    function(variable) {
+
+      formula <- stats::reformulate(
+        "color",
+        response = variable
+      )
+
+      fit <- stats::aov(
+        formula,
+        data = manova_data
+      )
+
+      tab <- summary(fit)[[1]]
+
+      # Calculate eta-squared effect size
+      eta_squared <- tab[1, "Sum Sq"] /
+        sum(tab[, "Sum Sq"])
+
+      data.frame(
+        Variable = variable,
+        F_value = tab[1, "F value"],
+        df1 = tab[1, "Df"],
+        df2 = tab[2, "Df"],
+        p_value = tab[1, "Pr(>F)"],
+        Eta_squared = eta_squared
+      )
+    }
+  ) |>
+    dplyr::mutate(
+      # Adjust for multiple comparisons
+      p_adjusted = stats::p.adjust(
+        p_value,
+        method = "holm"
+      ),
+
+      # Determine significance using unrounded values
+      Significance = dplyr::case_when(
+        p_adjusted < 0.001 ~ "***",
+        p_adjusted < 0.01  ~ "**",
+        p_adjusted < 0.05  ~ "*",
+        TRUE ~ "Not significant"
+      )
+    )
+
+  # Format a separate display table without changing
+  # the original numeric results
+  anova_display <- anova_results |>
+    dplyr::mutate(
+      F_value = sprintf("%.2f", F_value),
+      df1 = as.character(df1),
+      df2 = as.character(df2),
+
+      p_value = ifelse(
+        p_value < 0.001,
+        "< .001",
+        sprintf("%.3f", p_value)
+      ),
+
+      Eta_squared = sprintf("%.3f", Eta_squared),
+
+      p_adjusted = ifelse(
+        p_adjusted < 0.001,
+        "< .001",
+        sprintf("%.3f", p_adjusted)
+      )
+    )
+
+  # Render a proper HTML table
+  knitr::kable(
+    anova_display,
+    format = "html",
+    caption = "Follow-Up ANOVA Results and Effect Sizes",
+    col.names = c(
+      "Variable",
+      "F-value",
+      "Numerator df",
+      "Denominator df",
+      "p-value",
+      "Eta-squared",
+      "Holm-adjusted p-value",
+      "Significance"
+    ),
+    align = "lrrrrrrl",
+    escape = TRUE,
+    row.names = FALSE
+  ) |>
+    kableExtra::kable_styling(
+      bootstrap_options = c("striped", "hover", "condensed"),
+      full_width = TRUE,
+      font_size = 12
+    ) |>
+    kableExtra::scroll_box(
+      width = "100%",
+      height = "350px"
+    )
+
+} else {
+
+  cat(
+    "The overall MANOVA was not significant at ",
+    "alpha = 0.05. Follow-up tests were not performed ",
+    "in this primary analysis."
+  )
+}
+```
+
+**Follow-up ANOVA and effect sizes.** All five response variables remained statistically significant after the Holm adjustment ($p_{\text{adjusted}} < .001$). The largest eta-squared values were observed for total sulfur dioxide ($\eta^2 = 0.4905$) and volatile acidity ($\eta^2 = 0.4265$), followed by fixed acidity ($\eta^2 = 0.2369$), residual sugar ($\eta^2 = 0.1217$), and pH ($\eta^2 = 0.1083$). These results indicate that the strength of the association with wine color differs across the selected measurements.
+
+## PCA (Principal Component Analysis)
+
+PCA was performed to investigate whether the 11 physicochemical measurements could be summarized using a smaller number of components while retaining a substantial proportion of the total variation. Since the variables differ in their measurement scales and variability, they were standardized before analysis. The number of components will be evaluated using eigenvalues, a scree plot, explained and cumulative variance, and parallel analysis. Component loadings and a biplot will then be examined to identify the physicochemical measurements that contribute most strongly to the retained components.
+
+### PCA Data Preparation and Standardization
+
+```{r pca-prepare}
+# Select the 11 physicochemical variables required for PCA
+physchem_vars <- c(
+  "fixed_acidity",
+  "volatile_acidity",
+  "citric_acid",
+  "residual_sugar",
+  "chlorides",
+  "free_sulfur_dioxide",
+  "total_sulfur_dioxide",
+  "density",
+  "p_h",
+  "sulphates",
+  "alcohol"
+)
+
+# Identify complete observations for these variables
+pca_complete_rows <- stats::complete.cases(
+  wine_data[, physchem_vars, drop = FALSE]
+)
+
+# Prepare PCA data without color or quality
+pca_data <- wine_data[
+  pca_complete_rows,
+  physchem_vars,
+  drop = FALSE
+]
+
+# Keep wine color only as supplementary information for plots
+pca_color <- droplevels(
+  wine_data$color[pca_complete_rows]
+)
+
+# Report the number of observations used
+pca_sample_summary <- data.frame(
+  Measure = c(
+    "Original observations",
+    "Observations used in PCA",
+    "Observations excluded due to missing values",
+    "Physicochemical variables"
+  ),
+  Count = c(
+    nrow(wine_data),
+    nrow(pca_data),
+    nrow(wine_data) - nrow(pca_data),
+    length(physchem_vars)
+  )
+)
+
+knitr::kable(
+  pca_sample_summary,
+  caption = "PCA Sample and Variable Summary",
+  booktabs = TRUE
+)
+
+# Fit PCA using centered and standardized variables
+pca_fit <- stats::prcomp(
+  pca_data,
+  center = TRUE,
+  scale. = TRUE
+)
+
+# Inspect the PCA model
+summary(pca_fit)
+```
+
+**PCA sample preparation.** All 6,497 observations were retained, with no observations excluded due to missing values among the 11 physicochemical variables. The PCA was performed using standardized measurements, while wine color and quality were excluded from the component calculations as required by the assessment.
+
+### Correlation Structure
+
+```{r pca-correlations, fig.width=10, fig.height=9}
+# Calculate Pearson correlations among the PCA variables
+pca_cor_matrix <- stats::cor(
+  pca_data,
+  method = "pearson"
+)
+
+# Print the numerical correlation matrix
+round(pca_cor_matrix, 3)
+
+# Visualize correlations
+corrplot::corrplot(
+  pca_cor_matrix,
+  method = "color",
+  type = "upper",
+  order = "hclust",
+  diag = FALSE,
+  addCoef.col = "black",
+  number.cex = 0.55,
+  tl.col = "black",
+  tl.cex = 0.8,
+  tl.srt = 45,
+  col = grDevices::colorRampPalette(
+    c("#B94A48", "white", "#3976A8")
+  )(200),
+  title = "Correlation Structure of PCA Variables",
+  mar = c(0, 0, 2, 0)
+)
+```
+
+**Correlation structure.** The correlation matrix shows several relationships among the physicochemical variables, particularly between free and total sulfur dioxide (\(r = 0.72\)) and between density and alcohol (\(r = -0.69\)). These relationships suggest that some measurements share information, making PCA appropriate for investigating whether the original variables can be summarized by a smaller number of components.
+
+### Eigenvalues and Explained Variance
+
+```{r pca-variance}
+# Calculate eigenvalues from the PCA model
+pca_eigenvalues <- pca_fit$sdev^2
+
+# Calculate variance proportions
+pca_variance <- data.frame(
+  Component = paste0(
+    "PC",
+    seq_along(pca_eigenvalues)
+  ),
+  Eigenvalue = pca_eigenvalues,
+  Proportion_Variance =
+    pca_eigenvalues / sum(pca_eigenvalues),
+  Cumulative_Variance = cumsum(
+    pca_eigenvalues / sum(pca_eigenvalues)
+  )
+) |>
+  dplyr::mutate(
+    dplyr::across(
+      c(
+        Eigenvalue,
+        Proportion_Variance,
+        Cumulative_Variance
+      ),
+      ~ round(.x, 4)
+    ),
+    Variance_Percent = round(
+      Proportion_Variance * 100,
+      2
+    ),
+    Cumulative_Percent = round(
+      Cumulative_Variance * 100,
+      2
+    )
+  )
+
+knitr::kable(
+  pca_variance,
+  caption = "PCA Eigenvalues and Explained Variance",
+  col.names = c(
+    "Component",
+    "Eigenvalue",
+    "Variance Proportion",
+    "Cumulative Proportion",
+    "Variance (%)",
+    "Cumulative Variance (%)"
+  ),
+  digits = 4,
+  booktabs = TRUE,
+  align = "lrrrrr"
+)
+```
+
+**Explained variance.** The first principal component explains 27.54% of the total variance, while the second explains 22.67%, giving a cumulative variance of 50.22%. The third component contributes another 14.15%, bringing the cumulative variance explained by the first three components to 64.36%. Thus, three components summarize nearly two-thirds of the variation in the 11 original physicochemical measurements.
+
+### Scree Plot
+
+```{r pca-scree, fig.width=8, fig.height=5}
+scree_data <- data.frame(
+  Component_Number = seq_along(pca_eigenvalues),
+  Eigenvalue = pca_eigenvalues
+)
+
+ggplot2::ggplot(
+  scree_data,
+  ggplot2::aes(
+    x = Component_Number,
+    y = Eigenvalue
+  )
+) +
+  ggplot2::geom_line(linewidth = 0.8) +
+  ggplot2::geom_point(size = 2.5) +
+  ggplot2::geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    color = "red"
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq_along(pca_eigenvalues)
+  ) +
+  ggplot2::labs(
+    title = "Scree Plot of Principal Component Eigenvalues",
+    x = "Principal Component",
+    y = "Eigenvalue"
+  ) +
+  ggplot2::theme_minimal(base_size = 12)
+```
+
+**Scree plot.** The eigenvalues decrease sharply across the first three components, after which the decline becomes more gradual. The curve suggests an elbow around the third component, supporting the consideration of three components, although the decision should also be assessed using parallel analysis and the cumulative variance explained.
+
+### Parallel Analysis for PCA
+
+```{r pca-parallel, fig.width=8, fig.height=6}
+# Set seed for reproducibility
+set.seed(1220)
+
+# Compare observed PCA eigenvalues with simulated reference eigenvalues
+parallel_result <- psych::fa.parallel(
+  pca_data,
+  fa = "pc",
+  n.iter = 100,
+  plot = TRUE,
+  main = "Parallel Analysis for PCA"
+)
+```
+
+**Parallel analysis.** The parallel analysis recommends retaining three principal components because the observed eigenvalues exceed the simulated reference values for the first three components. This supports the three-component solution and provides additional evidence beyond the eigenvalue-greater-than-one rule alone.
+
+### Preliminary PCA Loadings
+
+```{r pca-loading-preview}
+# Extract loadings for the first five components, or fewer if unavailable
+n_preview <- min(5, ncol(pca_fit$rotation))
+
+loading_preview <- data.frame(
+  Variable = rownames(pca_fit$rotation),
+  pca_fit$rotation[
+    ,
+    seq_len(n_preview),
+    drop = FALSE
+  ],
+  check.names = FALSE
+)
+
+# Round the loadings for presentation
+loading_preview[-1] <- lapply(
+  loading_preview[-1],
+  round,
+  digits = 3
+)
+
+knitr::kable(
+  loading_preview,
+  caption = "Preliminary Loadings for the First Five Principal Components",
+  format = "html",
+  booktabs = TRUE,
+  align = c("l", rep("r", n_preview))
+) |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    font_size = 11
+  ) |>
+  kableExtra::scroll_box(
+    width = "100%",
+    height = "400px"
+  )
+```
+
+**Preliminary loadings.** The first component has its strongest positive loadings on total sulfur dioxide (0.487) and free sulfur dioxide (0.431), with a negative loading on volatile acidity (-0.381). The second component is characterized mainly by density (-0.584) and alcohol (0.465), while the third has notable loadings for citric acid (-0.591), pH (0.455), and fixed acidity (-0.434). These patterns suggest that the components represent different combinations of physicochemical characteristics; their final interpretations will depend on the retained solution and the relative contributions of the variables.
+
+### PCA Biplot
+
+```{r pca-biplot, fig.width=9, fig.height=7}
+# Calculate the variance explained by the first two components
+pc1_percent <- pca_variance$Proportion_Variance[1] * 100
+pc2_percent <- pca_variance$Proportion_Variance[2] * 100
+
+# Prepare observation scores
+pca_scores <- data.frame(
+  PC1 = pca_fit$x[, 1],
+  PC2 = pca_fit$x[, 2],
+  color = pca_color
+)
+
+# Sample observations to improve readability
+set.seed(1220)
+
+plot_rows <- sample(
+  seq_len(nrow(pca_scores)),
+  size = min(1500, nrow(pca_scores))
+)
+
+scores_plot <- pca_scores[plot_rows, ]
+
+# Prepare variable loading vectors
+loadings_plot <- data.frame(
+  Variable = rownames(pca_fit$rotation),
+  PC1 = pca_fit$rotation[, 1],
+  PC2 = pca_fit$rotation[, 2]
+)
+
+# Scale arrows for display on the observation-score axes
+arrow_scale <- 0.75 * min(
+  max(abs(pca_scores$PC1)) /
+    max(abs(loadings_plot$PC1)),
+  max(abs(pca_scores$PC2)) /
+    max(abs(loadings_plot$PC2))
+)
+
+loadings_plot <- loadings_plot |>
+  dplyr::mutate(
+    PC1_arrow = PC1 * arrow_scale,
+    PC2_arrow = PC2 * arrow_scale
+  )
+
+# Create the biplot
+ggplot2::ggplot(
+  scores_plot,
+  ggplot2::aes(
+    x = PC1,
+    y = PC2,
+    color = color
+  )
+) +
+  ggplot2::geom_point(
+    alpha = 0.3,
+    size = 1
+  ) +
+  ggplot2::geom_segment(
+    data = loadings_plot,
+    ggplot2::aes(
+      x = 0,
+      y = 0,
+      xend = PC1_arrow,
+      yend = PC2_arrow
+    ),
+    inherit.aes = FALSE,
+    color = "black",
+    arrow = grid::arrow(
+      length = grid::unit(0.18, "cm")
+    ),
+    linewidth = 0.5
+  ) +
+  ggplot2::geom_text(
+    data = loadings_plot,
+    ggplot2::aes(
+      x = PC1_arrow,
+      y = PC2_arrow,
+      label = Variable
+    ),
+    inherit.aes = FALSE,
+    color = "black",
+    size = 3,
+    nudge_y = 0.1
+  ) +
+  ggplot2::scale_color_manual(
+    values = c(
+      "Red" = "#B94A48",
+      "White" = "#D6AD45"
+    )
+  ) +
+  ggplot2::labs(
+    title = "PCA Biplot: Wine Scores and Variable Loadings",
+    subtitle = "Points show a sample of observations; arrows show variable directions",
+    x = paste0(
+      "PC1 (",
+      round(pc1_percent, 2),
+      "% variance)"
+    ),
+    y = paste0(
+      "PC2 (",
+      round(pc2_percent, 2),
+      "% variance)"
+    ),
+    color = "Wine Color"
+  ) +
+  ggplot2::theme_minimal(base_size = 11) +
+  ggplot2::theme(
+    legend.position = "bottom",
+    plot.title = ggplot2::element_text(face = "bold")
+  )
+```
+
+**PCA biplot.** The first two components explain a combined 50.22% of the total variance, with PC1 accounting for 27.54% and PC2 for 22.67%. The plotted red and white wines show some separation along PC1, although the groups still overlap. The loading arrows also highlight the opposing directions of alcohol and density, consistent with their strong negative correlation. This visualization illustrates patterns of variation but does not independently establish statistical significance.
+
+### Final Loadings for the Retained Components
+
+```{r pca-final-loadings}
+# Calculate variable-component correlation loadings
+pca_loadings <- sweep(
+  pca_fit$rotation[, 1:3, drop = FALSE],
+  2,
+  pca_fit$sdev[1:3],
+  "*"
+)
+
+# Prepare the loading table
+loading_table <- data.frame(
+  Variable = rownames(pca_loadings),
+  round(pca_loadings, 3),
+  check.names = FALSE
+)
+
+rownames(loading_table) <- NULL
+
+knitr::kable(
+  loading_table,
+  format = "html",
+  caption = "Variable Loadings for the Three Retained Principal Components",
+  col.names = c("Variable", "PC1", "PC2", "PC3"),
+  booktabs = TRUE,
+  align = "lrrr"
+) |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = TRUE,
+    font_size = 12
+  ) |>
+  kableExtra::scroll_box(
+    width = "100%",
+    height = "400px"
+  )
+```
+
+**PC1 — Sulfur Dioxide and Sugar versus Acidity-Related Measurements.** The first principal component explains 27.54% of the total variance. Its strongest positive loadings are associated with total sulfur dioxide (approximately 0.848), free sulfur dioxide (0.750), and residual sugar (0.602). In contrast, volatile acidity (-0.663), sulphates (-0.512), and chlorides (-0.505) have substantial negative loadings. PC1 therefore represents a contrast between sulfur dioxide and residual sugar measurements on one side and a profile involving acidity, sulphates, and chlorides on the other. In the biplot, red and white wines show some separation along this component, consistent with the group differences observed in the EDA.
+
+**PC2 — Alcohol and Density Contrast.** The second component explains 22.67% of the total variance. Density has a strong negative loading (approximately -0.922), while alcohol has a strong positive loading (0.734). Fixed acidity (-0.531) and residual sugar (-0.521) also contribute negatively. PC2 therefore describes a contrast between alcohol content and a combination of density, acidity, and residual sugar measurements. This pattern is consistent with the negative alcohol-density correlation observed during EDA, although the component represents a multivariable pattern rather than a causal relationship between the measurements.
+
+**PC3 — Acidity Composition.** The third component explains 14.15% of the total variance. Citric acid has a strong negative loading (approximately -0.737), while pH has a positive loading (0.568) and fixed acidity has a negative loading (-0.541). These opposing loadings suggest that PC3 captures differences in acidity-related composition, particularly the contrast between citric acid and fixed acidity measurements and pH. This component provides a third dimension of variation that is not fully represented by the sulfur dioxide, sugar, alcohol, and density patterns of the first two components.
+
+## EFA (Exploratory Factor Analysis)
+
+Exploratory Factor Analysis (EFA) was conducted to investigate whether the relationships among the 11 physicochemical measurements could be explained by a smaller number of underlying factors. Unlike PCA, which summarizes total variance, EFA focuses on identifying common patterns of variation shared by the observed variables. The analysis will assess the suitability of the data for factor analysis, determine the appropriate number of factors, and examine factor loadings, communalities, and uniqueness to support the interpretation of the underlying physicochemical characteristics.
+
+### Preparing the EFA Dataset
+
+The analysis uses the same 11 physicochemical variables included in PCA. The `color` and `quality` variables are excluded so that the factor structure is based only on the chemical measurements.
+
+```{r efa-prepare}
+# Define the 11 physicochemical variables
+efa_variables <- c(
+  "fixed_acidity",
+  "volatile_acidity",
+  "citric_acid",
+  "residual_sugar",
+  "chlorides",
+  "free_sulfur_dioxide",
+  "total_sulfur_dioxide",
+  "density",
+  "p_h",
+  "sulphates",
+  "alcohol"
+)
+
+# Select the required variables and remove incomplete observations
+efa_data <- wine_data |>
+  dplyr::select(dplyr::all_of(efa_variables)) |>
+  tidyr::drop_na()
+
+# Summarize the EFA sample
+efa_sample_summary <- data.frame(
+  Measure = c(
+    "Original observations",
+    "Observations used in EFA",
+    "Observations excluded for missing values",
+    "Number of variables"
+  ),
+  Count = c(
+    nrow(wine_data),
+    nrow(efa_data),
+    nrow(wine_data) - nrow(efa_data),
+    ncol(efa_data)
+  )
+)
+
+knitr::kable(
+  efa_sample_summary,
+  caption = "EFA Sample and Variable Summary",
+  booktabs = TRUE,
+  align = c("l", "r")
+)
+
+# Verify the number of selected variables
+stopifnot(ncol(efa_data) == 11)
+```
+
+### Assessing Factorability
+
+The correlation matrix is examined to identify relationships among the physicochemical variables. The Kaiser-Meyer-Olkin (KMO) measure assesses sampling adequacy, while Bartlett's test of sphericity evaluates whether the correlation matrix differs significantly from an identity matrix.
+
+```{r efa-factorability, fig.width=10, fig.height=9}
+# Calculate the correlation matrix
+efa_cor <- stats::cor(
+  efa_data,
+  method = "pearson",
+  use = "complete.obs"
+)
+
+# Display the correlation matrix as a heatmap
+corrplot::corrplot(
+  efa_cor,
+  method = "color",
+  type = "upper",
+  order = "hclust",
+  addCoef.col = "black",
+  number.cex = 0.55,
+  tl.col = "black",
+  tl.cex = 0.8,
+  tl.srt = 45,
+  col = grDevices::colorRampPalette(
+    c("#B94A48", "white", "#3976A8")
+  )(200),
+  title = "Correlation Matrix of EFA Variables",
+  mar = c(0, 0, 2, 0)
+)
+
+# Kaiser-Meyer-Olkin measure
+efa_kmo <- psych::KMO(efa_cor)
+
+# Display overall KMO
+kmo_summary <- data.frame(
+  Overall_KMO = efa_kmo$MSA
+)
+
+knitr::kable(
+  kmo_summary,
+  caption = "Overall Kaiser-Meyer-Olkin Measure",
+  digits = 3,
+  booktabs = TRUE
+)
+
+# Display KMO measure for each variable
+kmo_variable_table <- data.frame(
+  Variable = names(efa_kmo$MSAi),
+  Item_MSA = as.numeric(efa_kmo$MSAi)
+) |>
+  dplyr::mutate(
+    Item_MSA = round(Item_MSA, 3)
+  )
+
+knitr::kable(
+  kmo_variable_table,
+  caption = "KMO Measure for Each Variable",
+  digits = 3,
+  booktabs = TRUE
+)
+
+# Bartlett's test of sphericity
+efa_bartlett <- psych::cortest.bartlett(
+  efa_cor,
+  n = nrow(efa_data)
+)
+
+# Format Bartlett's test result
+bartlett_summary <- data.frame(
+  Chi_Square = as.numeric(efa_bartlett$chisq),
+  Degrees_of_Freedom = as.numeric(efa_bartlett$df),
+  P_Value = as.numeric(efa_bartlett$p.value)
+) |>
+  dplyr::mutate(
+    Chi_Square = round(Chi_Square, 3),
+    P_Value = ifelse(
+      P_Value < 0.001,
+      "< .001",
+      sprintf("%.3f", P_Value)
+    )
+  )
+
+knitr::kable(
+  bartlett_summary,
+  caption = "Bartlett's Test of Sphericity",
+  col.names = c(
+    "Chi-square",
+    "Degrees of Freedom",
+    "p-value"
+  ),
+  booktabs = TRUE
+)
+```
+
+The overall Kaiser-Meyer-Olkin (KMO) measure of sampling adequacy was **0.405**, which is below the commonly used minimum guideline of 0.50. This indicates that the correlation patterns among the 11 physicochemical variables may not be sufficiently compact for a reliable exploratory factor analysis. The individual measures also show that five variables—fixed acidity, residual sugar, density, pH, and alcohol—have KMO values below 0.50, suggesting that these variables may be poorly represented by the shared correlation structure. Therefore, the KMO results raise concerns about the suitability of the complete set of variables for EFA.
+
+Bartlett’s test of sphericity produced a chi-square statistic of \(\chi^2(55) = 37094.62\), with \(p < 0.001\). Therefore, the null hypothesis that the population correlation matrix is an identity matrix is rejected. This indicates that statistically significant correlations exist among the variables, providing evidence that they are not completely unrelated. However, a significant Bartlett’s test does not guarantee that the data are suitable for factor analysis; the low overall KMO value remains an important limitation.
+
+The eigenvalue-one criterion suggests retaining three factors because the first three eigenvalues exceed 1: 3.0299, 2.4938, and 1.5563. The fourth eigenvalue is 0.9706, which falls slightly below this threshold. In contrast, parallel analysis recommends retaining four factors, while the scree plot shows a pronounced decline in eigenvalues across the first few factors, followed by a more gradual decrease. These criteria therefore suggest either three or four factors rather than a single definitive solution. The final decision should also consider the interpretability of the factor loadings and, importantly, the low KMO results.
+
+### Determining the Number of Factors
+
+The number of factors is evaluated using parallel analysis and the scree plot, supported by the eigenvalues and interpretability of the resulting factor solution. Parallel analysis compares the observed eigenvalues with those generated from random data and provides evidence for how many factors may be retained.
+
+```{r efa-factor-retention, fig.width=9, fig.height=6}
+# Set the seed for reproducibility
+set.seed(1220)
+
+# Parallel analysis for exploratory factor analysis
+efa_parallel <- psych::fa.parallel(
+  efa_data,
+  fa = "fa",
+  fm = "minres",
+  n.iter = 100,
+  error.bars = FALSE,
+  main = "Parallel Analysis for Exploratory Factor Analysis"
+)
+
+# Eigenvalues of the correlation matrix
+efa_eigenvalues <- eigen(
+  efa_cor,
+  symmetric = TRUE
+)$values
+
+# Create the eigenvalue table
+efa_eigen_table <- data.frame(
+  Factor_Number = seq_along(efa_eigenvalues),
+  Eigenvalue = round(efa_eigenvalues, 4)
+)
+
+knitr::kable(
+  efa_eigen_table,
+  caption = "Eigenvalues of the EFA Correlation Matrix",
+  col.names = c(
+    "Factor Number",
+    "Eigenvalue"
+  ),
+  booktabs = TRUE,
+  digits = 4
+)
+
+# Prepare data for the scree plot
+efa_scree_data <- data.frame(
+  Factor_Number = seq_along(efa_eigenvalues),
+  Eigenvalue = efa_eigenvalues
+)
+
+# Draw the scree plot
+ggplot2::ggplot(
+  efa_scree_data,
+  ggplot2::aes(
+    x = Factor_Number,
+    y = Eigenvalue
+  )
+) +
+  ggplot2::geom_line(linewidth = 0.8) +
+  ggplot2::geom_point(size = 2.5) +
+  ggplot2::geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    color = "red"
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq_along(efa_eigenvalues)
+  ) +
+  ggplot2::labs(
+    title = "Scree Plot for Exploratory Factor Analysis",
+    x = "Factor Number",
+    y = "Eigenvalue"
+  ) +
+  ggplot2::theme_minimal(base_size = 12)
+```
+
+### Follow-up Check of Variables with Low MSA
+
+The individual measures of sampling adequacy (MSA) were examined to identify variables that may be weakening the correlation structure for EFA. As a supplementary diagnostic, variables with MSA values of at least 0.50 are retained temporarily to determine whether the overall KMO improves.
+
+```{r efa-reduced-factorability}
+# Identify variables with individual MSA values of at least 0.50
+efa_msa <- as.numeric(efa_kmo$MSAi)
+names(efa_msa) <- names(efa_kmo$MSAi)
+
+efa_keep_vars <- names(efa_msa[efa_msa >= 0.50])
+
+# Create a reduced dataset for diagnostic comparison
+efa_reduced_data <- efa_data |>
+  dplyr::select(dplyr::all_of(efa_keep_vars))
+
+# Calculate the reduced correlation matrix and KMO
+efa_reduced_cor <- cor(efa_reduced_data, method = "pearson")
+
+efa_reduced_kmo <- psych::KMO(efa_reduced_cor)
+
+# Calculate Bartlett's test for the reduced dataset
+efa_reduced_bartlett <- psych::cortest.bartlett(
+  efa_reduced_cor,
+  n = nrow(efa_reduced_data)
+)
+
+# Display variables retained for this diagnostic
+knitr::kable(
+  data.frame(
+    Variable = efa_keep_vars,
+    MSA = round(efa_msa[efa_keep_vars], 3)
+  ),
+  caption = "Variables Retained for the Supplementary Factorability Check",
+  row.names = FALSE,
+  booktabs = TRUE
+)
+
+# Display overall KMO comparison
+knitr::kable(
+  data.frame(
+    Dataset = c("Original 11 Variables", "Reduced Variable Set"),
+    Number_of_Variables = c(ncol(efa_data), ncol(efa_reduced_data)),
+    Overall_KMO = round(
+      c(efa_kmo$MSA, efa_reduced_kmo$MSA), 3
+    ),
+    Bartlett_Chi_Square = round(
+      c(efa_bartlett$chisq, efa_reduced_bartlett$chisq), 3
+    ),
+    Bartlett_df = c(efa_bartlett$df, efa_reduced_bartlett$df),
+    Bartlett_p_value = c(
+      ifelse(efa_bartlett$p.value < 0.001, "< .001",
+             sprintf("%.3f", efa_bartlett$p.value)),
+      ifelse(efa_reduced_bartlett$p.value < 0.001, "< .001",
+             sprintf("%.3f", efa_reduced_bartlett$p.value))
+    )
+  ),
+  caption = "Comparison of EFA Factorability Diagnostics",
+  row.names = FALSE,
+  booktabs = TRUE
+)
+```
+
+The supplementary factorability check showed an improvement in the overall Kaiser-Meyer-Olkin (KMO) measure after restricting the analysis to six variables. The KMO increased from **0.405 for the original 11-variable dataset to 0.636 for the reduced dataset**, indicating a more suitable correlation structure for exploratory factor analysis. The retained variables were volatile acidity, citric acid, chlorides, free sulfur dioxide, total sulfur dioxide, and sulphates, all of which had individual MSA values above 0.50.
+
+Bartlett’s test remained statistically significant for the reduced dataset, \(\chi^2(15) = 9955.50,\ p < 0.001\). Therefore, the hypothesis that the correlation matrix is an identity matrix is rejected, indicating that correlations remain among the six variables. Taken together, the improved KMO and significant Bartlett’s test provide stronger support for proceeding with EFA on the reduced set, although the KMO value of 0.636 still warrants cautious interpretation.
+
+The reduction in variables should be treated as a supplementary analytical decision rather than evidence that the five excluded physicochemical variables are unimportant to wine quality. Their lower MSA values indicate that they are less suitable for the shared factor structure of this particular variable set.
+
+### Determining the Number of Factors for the Reduced Dataset
+
+Because the supplementary factorability check identified a more suitable six-variable set, parallel analysis and the scree plot are repeated to determine the number of factors for this reduced model. The number of factors will be selected using parallel analysis, the eigenvalue pattern, and the interpretability of the resulting factor loadings.
+
+```{r efa-reduced-factor-retention}
+# Parallel analysis for the six-variable dataset
+set.seed(1220)
+
+efa_reduced_parallel <- psych::fa.parallel(
+  efa_reduced_data,
+  fa = "fa",
+  fm = "minres",
+  n.iter = 100,
+  error.bars = FALSE,
+  main = "Parallel Analysis for the Reduced Six-Variable EFA"
+)
+
+# Calculate eigenvalues of the reduced correlation matrix
+efa_reduced_eigenvalues <- eigen(
+  efa_reduced_cor,
+  symmetric = TRUE
+)$values
+
+# Create and display the eigenvalue table
+efa_reduced_eigen_table <- data.frame(
+  Factor_Number = seq_along(efa_reduced_eigenvalues),
+  Eigenvalue = round(efa_reduced_eigenvalues, 4)
+)
+
+knitr::kable(
+  efa_reduced_eigen_table,
+  caption = "Eigenvalues of the Reduced EFA Correlation Matrix",
+  col.names = c("Factor Number", "Eigenvalue"),
+  digits = 4,
+  row.names = FALSE,
+  booktabs = TRUE
+)
+
+# Scree plot for the reduced dataset
+efa_reduced_scree_data <- data.frame(
+  Factor_Number = seq_along(efa_reduced_eigenvalues),
+  Eigenvalue = efa_reduced_eigenvalues
+)
+
+ggplot(
+  efa_reduced_scree_data,
+  aes(x = Factor_Number, y = Eigenvalue)
+) +
+  geom_line() +
+  geom_point() +
+  geom_hline(
+    yintercept = 1,
+    linetype = "dashed",
+    color = "red"
+  ) +
+  scale_x_continuous(
+    breaks = efa_reduced_scree_data$Factor_Number
+  ) +
+  labs(
+    title = "Scree Plot for the Reduced Six-Variable EFA",
+    x = "Factor Number",
+    y = "Eigenvalue"
+  ) +
+  theme_minimal()
+```
+
+Parallel analysis recommends retaining three factors, while the eigenvalue-one criterion suggests two factors because only the first two eigenvalues (2.4641 and 1.2378) exceed 1. The scree plot also shows a sharp decline after the first factor, followed by a more gradual decrease, making a two-factor solution worth considering. 
+
+To determine the more appropriate structure, both two-factor and three-factor models will be fitted using Minimum Residual (MINRES) extraction, which estimates factors by minimizing differences between observed and model-estimated correlations. 
+
+### Factor Extraction and Rotation
+
+The Minimum Residual (MINRES) extraction method is used because it estimates factors by minimizing the differences between observed and model-implied correlations. Oblimin rotation is selected because it allows the extracted factors to correlate, which is reasonable when studying related physicochemical characteristics of wine.
+
+```{r efa-factor-extraction}
+# Fit the two-factor solution
+efa_2factor <- psych::fa(
+  r = efa_reduced_cor,
+  nfactors = 2,
+  n.obs = nrow(efa_reduced_data),
+  fm = "minres",
+  rotate = "oblimin"
+)
+
+# Fit the three-factor solution
+efa_3factor <- psych::fa(
+  r = efa_reduced_cor,
+  nfactors = 3,
+  n.obs = nrow(efa_reduced_data),
+  fm = "minres",
+  rotate = "oblimin"
+)
+
+# Display the two-factor solution
+cat("TWO-FACTOR SOLUTION\n")
+
+print(
+  efa_2factor,
+  cut = 0.30,
+  sort = TRUE,
+  digits = 3
+)
+
+# Display the three-factor solution
+cat("\nTHREE-FACTOR SOLUTION\n")
+
+print(
+  efa_3factor,
+  cut = 0.30,
+  sort = TRUE,
+  digits = 3
+)
+```
+
+**The two-factor solution** grouped total sulfur dioxide and free sulfur dioxide strongly on the first factor, with volatile acidity loading negatively and citric acid loading more weakly. The second factor was dominated by chlorides, with sulphates showing a smaller loading. The factors had a correlation of \(-0.315\), indicating a moderate negative relationship. However, the low communality of citric acid and poor fit indices (RMSEA = 0.216; TLI = 0.543) suggest that this solution does not adequately represent all six variables.
+
+**The three-factor solution** separated the sulfur dioxide variables into the first factor, placed citric acid mainly on the second, and grouped chlorides with sulphates on the third. It explained approximately 63.6% of the variance, compared with 49.4% for the two-factor solution. However, the three-factor model has zero degrees of freedom, so its near-zero residual cannot establish that it is a better-fitting model; it also produces a factor dominated by citric acid alone. Therefore, neither solution is entirely satisfactory, and the factor structure should be interpreted cautiously given the limited factorability of the reduced dataset.
+
+### Examining Factor Loadings, Communalities, and Uniqueness
+
+The three-factor solution is examined using the factor loadings, communalities, and uniqueness values. Factor loadings indicate the strength and direction of the relationship between each variable and a factor. Communalities represent the proportion of each variable's variance explained by the retained factors, while uniqueness represents the proportion not explained by the model.
+
+```{r efa-loading-table}
+# Extract the pattern matrix from the three-factor model
+efa_loading_matrix <- as.matrix(efa_3factor$loadings)
+
+# Count loadings with an absolute value of at least 0.30
+efa_salient_count <- rowSums(
+  abs(efa_loading_matrix) >= 0.30
+)
+
+# Identify each variable's loading pattern
+efa_loading_class <- ifelse(
+  efa_salient_count >= 2,
+  "Potential cross-loading",
+  ifelse(
+    apply(abs(efa_loading_matrix), 1, max) >= 0.50,
+    "Strong primary loading",
+    "Weak primary loading"
+  )
+)
+
+# Combine loadings, communalities, and uniqueness
+efa_loading_summary <- data.frame(
+  Variable = rownames(efa_loading_matrix),
+  MR1 = round(efa_loading_matrix[, "MR1"], 3),
+  MR2 = round(efa_loading_matrix[, "MR2"], 3),
+  MR3 = round(efa_loading_matrix[, "MR3"], 3),
+  Communality = round(efa_3factor$communality, 3),
+  Uniqueness = round(efa_3factor$uniquenesses, 3),
+  Interpretation = efa_loading_class,
+  check.names = FALSE
+)
+
+knitr::kable(
+  efa_loading_summary,
+  caption = "Three-Factor EFA Loadings, Communalities, and Uniqueness",
+  col.names = c(
+    "Variable",
+    "Factor 1",
+    "Factor 2",
+    "Factor 3",
+    "Communality",
+    "Uniqueness",
+    "Loading Classification"
+  ),
+  digits = 3,
+  row.names = FALSE,
+  booktabs = TRUE
+)
+```
+
+### Implications of the Three-Factor Solution
+
+**Factor 1 – Sulfur Dioxide Concentration:** Total sulfur dioxide (0.873) and free sulfur dioxide (0.841) loaded strongly on this factor, indicating a shared dimension related to sulfur dioxide concentration. Their communalities were 0.797 and 0.662, respectively, meaning the three factors explain approximately 79.7% and 66.2% of their variance.
+
+**Factor 2 – Citric Acid Dimension:** Citric acid had a very high loading (1.001), while volatile acidity loaded negatively (-0.331). This suggests a possible acidity-related dimension, but the factor is dominated by citric acid alone. Although citric acid had a communality of 0.995, meaning nearly all its variance was explained by the model, its loading above 1 warrants cautious interpretation.
+
+**Factor 3 – Chloride and Sulphate Profile:** Chlorides loaded strongly (0.853), while sulphates had a moderate loading (0.426), suggesting a possible dimension related to chloride and sulphate composition. However, sulphates had a low communality (0.241) and high uniqueness (0.759). This means the three factors explain only 24.1% of its variance, leaving 75.9% unexplained by the model.
+
+**Weak Loadings and Cross-Loadings:** Factor loadings indicate the strength and direction of a variable's relationship with a factor; values around 0.50 or higher are often considered strong, while values below 0.30 are generally weak. Sulphates has a moderate loading on Factor 3 but remains poorly represented overall because of its low communality. Volatile acidity also cross-loads on Factors 2 (-0.331) and 3 (0.371), meaning it relates to both factors rather than clearly belonging to just one. This makes its underlying dimension more difficult to interpret.
+
+Overall, the three-factor solution explains **63.6% of the variance**, but the reduced dataset's KMO of 0.636 indicates only moderate sampling adequacy. The citric-acid-dominated factor, sulphates' high uniqueness, volatile acidity's cross-loadings, and the model's zero degrees of freedom limit confidence in the results. Therefore, the factors should be treated as exploratory patterns rather than definitive underlying dimensions of wine physicochemical characteristics.
+
+# Integrated Interpretation
+
+## MANOVA: Differences Between Red and White Wines
+
+The MANOVA results showed a statistically significant difference between red and white wines across the five selected physicochemical variables (Pillai's Trace = 0.7451, \(F(5,6491)=3793.93\), \(p<0.001\)). Follow-up ANOVAs showed significant differences in all five variables after Holm adjustment. White wines had higher mean total sulfur dioxide (138.361 versus 46.468) and residual sugar (6.391 versus 2.539), while red wines had higher fixed acidity (8.320 versus 6.855), volatile acidity (0.528 versus 0.278), and pH (3.311 versus 3.188). Total sulfur dioxide and volatile acidity had the largest effect sizes, with eta-squared values of 0.4905 and 0.4265, respectively. These results indicate that red and white wines have distinct physicochemical profiles.
+
+## PCA: Major Dimensions of Variation
+
+PCA identified three principal components explaining **64.36% of the total variance** among the 11 standardized physicochemical variables. The first component explained 27.54% and contrasted sulfur dioxide concentrations and residual sugar with volatile acidity, chlorides, and sulphates. The second explained 22.67% and primarily contrasted alcohol content with density, while the third explained 14.15% and reflected relationships involving citric acid, pH, and fixed acidity. These components summarize correlated chemical measurements into broader dimensions of variation, making the relationships among the variables easier to examine.
+
+## EFA: Underlying Factors Among the Variables
+
+The original 11-variable EFA had a low KMO measure of 0.405, indicating that the variables were not adequately suited to a convincing factor analysis. A supplementary six-variable analysis improved the KMO to 0.636, and parallel analysis recommended three factors. The first factor was associated with total and free sulfur dioxide, the second was dominated by citric acid, and the third was primarily associated with chlorides, with a moderate contribution from sulphates. Although the three-factor solution explained 63.6% of the variance in the reduced dataset, its zero degrees of freedom and the weak representation of some variables limit confidence in the results. The factors should therefore be treated as tentative patterns rather than definitive underlying dimensions.
+
+## Comparison of PCA and EFA
+
+Both PCA and EFA highlighted sulfur dioxide measurements, particularly free and total sulfur dioxide, as important features of the correlation structure. Chlorides, sulphates, and acidity-related variables also contributed to patterns in the analyses. However, PCA summarizes total variance into principal components, whereas EFA attempts to identify common factors underlying correlations among variables. PCA used all 11 physicochemical variables, while the supplementary EFA used only six because of the low KMO of the original dataset. Their explained-variance percentages are therefore not directly comparable. PCA provides a more comprehensive summary of variation across the original variables, while EFA offers tentative interpretations of shared relationships in the reduced set.
+
+## Substantive Interpretation of Vinho Verde Wines
+
+The combined findings show that red and white Vinho Verde wines have distinct physicochemical profiles, particularly in sulfur dioxide concentration, residual sugar, and acidity-related measurements. White wines had substantially higher mean total sulfur dioxide (138.361) and residual sugar (6.391), while red wines had higher fixed acidity (8.320), volatile acidity (0.528), and sulphates (0.658). Their mean alcohol contents were relatively similar (10.423 for red and 10.514 for white), suggesting that alcohol content was less distinctive between the two groups than several other measurements.
+
+PCA further revealed that these characteristics are interconnected rather than independent. The first component highlighted variation in sulfur dioxide and residual sugar in contrast with volatile acidity, chlorides, and sulphates, while the second emphasized the relationship between alcohol content and density. The third reflected a different pattern involving citric acid, pH, and fixed acidity. The supplementary EFA similarly highlighted the strong relationship between free and total sulfur dioxide, although its other factors were less clearly defined.
+## Limitations of the Analysis
+
+Several limitations should be considered. First, the dataset is observational, so the detected associations do not establish causation. Second, the sample is imbalanced, containing 1,599 red wines and 4,898 white wines, which may affect comparisons between the groups. Third, potential outliers and violations of MANOVA assumptions—including non-normality and unequal covariance matrices—may influence the results, although Pillai's Trace was selected for its relative robustness. Fourth, the physicochemical analyses do not directly explain sensory quality scores, which represent an assessment of wine quality rather than a direct chemical measurement. Finally, strong correlations among some variables can complicate interpretation, while the original EFA's low KMO and the reduced model's limitations make its factor structure uncertain. PCA and EFA are useful for exploring multivariate patterns, but their components and factors are statistical representations and should not automatically be interpreted as definitive chemical mechanisms. Further analysis, including explicit modeling of sensory quality and validation of the factor structure, would help strengthen the conclusions.
+
+# Conclusion
+
+The analysis showed that red and white Vinho Verde wines have distinct physicochemical profiles. White wines generally had higher residual sugar and sulfur dioxide concentrations, while red wines had higher fixed acidity, volatile acidity, sulphates, and pH in this dataset. Their average alcohol contents were similar, suggesting that sugar, sulfur dioxide, and other chemical characteristics distinguish the wine types more clearly than alcohol content alone.
+
+PCA summarized the relationships among the 11 physicochemical variables into three components explaining 64.36% of the total variance, while EFA suggested possible shared factors but had limitations in factorability and interpretation. Overall, wine characteristics vary across several interconnected dimensions rather than a single chemical measure. These findings help describe the differences between red and white wines, although further analysis would be needed to explain how these characteristics relate to sensory quality.
+
+# References
+
+Cortez, P., Cerdeira, A., Almeida, F., Matos, T., & Reis, J. (2009a). Modeling wine preferences by data mining from physicochemical properties. *Decision Support Systems, 47*(4), 547–553. https://doi.org/10.1016/j.dss.2009.05.016
+
+Cortez, P., Cerdeira, A., Almeida, F., Matos, T., & Reis, J. (2009b). *Wine Quality* [Data set]. UCI Machine Learning Repository. https://doi.org/10.24432/C56S3T
+
+Horn, J. L. (1965). A rationale and test for the number of factors in factor analysis. *Psychometrika, 30*(2), 179–185. https://doi.org/10.1007/BF02289447
+
+Jolliffe, I. T., & Cadima, J. (2016). Principal component analysis: A review and recent developments. *Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences, 374*(2065), Article 20150202. https://doi.org/10.1098/rsta.2015.0202
