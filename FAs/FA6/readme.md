@@ -2,6 +2,9 @@
 
 **Course:** APM1220 – Applied Multivariate Data Analysis
 
+**## Joseph Raphael Espiritu ##**
+**## Spike Patayon ##**
+
 ## 1. Project Description
 
 This project investigates whether three varieties of wheat—Kama, Rosa, and Canadian—can be distinguished based on their geometrical characteristics using statistical discriminant analysis.
