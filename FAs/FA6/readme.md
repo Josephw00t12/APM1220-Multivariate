@@ -2,8 +2,8 @@
 
 **Course:** APM1220 – Applied Multivariate Data Analysis
 
-**## Joseph Raphael Espiritu ##**
-**## Spike Patayon ##**
+##** Joseph Raphael Espiritu **##
+##** Spike Patayon **##
 
 ## 1. Project Description
 
